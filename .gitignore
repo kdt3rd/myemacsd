@@ -1,0 +1,8 @@
+.cache/*
+.last-package-update-day
+amx-items
+auto-save-list/*
+elpa/*
+projectile-bookmarks.eld
+recentf
+transient/*
