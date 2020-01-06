@@ -1,0 +1,9 @@
+[submodule "site-elisp/color-rg"]
+	path = site-elisp/color-rg
+	url = https://github.com/manateelazycat/color-rg.git
+[submodule "site-elisp/lua-mode"]
+	path = site-elisp/lua-mode
+	url = https://github.com/immerrr/lua-mode.git
+[submodule "site-elisp/yaml-mode"]
+	path = site-elisp/yaml-mode
+	url = https://github.com/yoshiki/yaml-mode.git

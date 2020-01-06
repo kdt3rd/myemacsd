@@ -43,6 +43,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; If you add this make sure to add snails as a submodule
+;;; https://github.com/manateelazycat/snails.git
+;;;
+;;; so something like git submodule add https://github.com/manateelazycat/snails.git site-elisp/snails
+;;;
 ;;; (use-package snails
 ;;;   :load-path (lambda () (expand-file-name "site-elisp/snails/" user-emacs-directory))
 ;;;   :if *sys/gui*

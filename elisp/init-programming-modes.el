@@ -35,7 +35,39 @@
   :bind (:map json-mode-map
               ("\\C-m" . newline-and-indent))
   )
-  
+
+(use-package markdown-mode
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  )
+
+;; HRM, ninja-mode is just in the ninja repository, not a separate one
+;; so periodically one must check github.com/martine/ninja.git and see
+;; if there is an update to the file and put it in site-elisp manually
+(autoload 'ninja-mode "ninja-mode" "Major mode for ninja build" t)
+
+;; likewise, cmake-mode.el is in the cmake repo
+;; https://gitlab.kitware.com/cmake/cmake.git
+;; in the Auxiliary folder
+(autoload 'cmake-mode "cmake-mode" "Major mode for editing cmake files" t)
+
+;; more config info on web-mode.org
+(use-package web-mode
+  :mode (("\\.phtml\\'" . web-mode)
+         ("\\.tpl\\.php\\'" . web-mode)
+         ("\\.[agj]sp\\'" . web-mode)
+         ("\\.erb\\'" . web-mode)
+         ("\\.mustach\\'" . web-mode)
+         ("\\.djhtml\\'" . web-mode)
+         ("\\.html?\\'" . web-mode)
+         ("\\.css?\\'" . web-mode)
+         ("\\.scss?\\'" . web-mode))
+  :config
+  (setq web-mode-engines-alist
+    '(("php" . "\\.phtml\\'")
+      ("blade" . "\\.blade\\."))))
+
 ;; Set up for po mode
 (autoload 'po-mode "po-mode" "Major mode for translators to edit PO files" t)
 
@@ -43,15 +75,8 @@
 (autoload 'gnuplot-mode "gnuplot" "gnuplot major mode" t)
 (autoload 'gnuplot-make-buffer "gnuplot" "open a buffer in gnuplot mode" t)
 
-;; Set up for ninja mode
-(autoload 'ninja-mode "ninja-mode" "Major mode for ninja build" t)
-
-;; Set up for ninja mode
-(autoload 'markdown-mode "markdown-mode" "Major mode for markdown files" t)
-
 (eval-when-compile
-  (require 'lua-mode)
-  (require 'web-mode)
+  (require 'text-mode)
   (require 'python-mode)
   (require 'perl-mode))
 
@@ -200,7 +225,6 @@
                 ("\\.c$"   . c-mode)
                 ("\\.m$"   . octave-mode)
                 ("\\.mm$"   . objc-mode)
-                ("\\.md$"   . markdown-mode)
                 ("\\.md\\.html$"   . markdown-mode)
                 ("\\.pl$" . perl-mode)
                 ("\\.pm$" . perl-mode)
