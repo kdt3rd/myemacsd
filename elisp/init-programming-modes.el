@@ -23,7 +23,7 @@
   :mode (("\\.yaml\\'" . yaml-mode)
       ("\\.yml\\'" . yaml-mode))
   :bind (:map yaml-mode-map
-              ("\\C-m" . newline-and-indent))
+              ("\C-m" . newline-and-indent))
   :config
   (defun my-yaml-mode-hook ()
     (auto-fill-mode 0))
@@ -33,7 +33,7 @@
 (use-package json-mode
   :mode (("\\.json\\'" . json-mode))
   :bind (:map json-mode-map
-              ("\\C-m" . newline-and-indent))
+              ("\C-m" . newline-and-indent))
   )
 
 (use-package markdown-mode
@@ -152,11 +152,17 @@
   (setq c-auto-align-backslashes t)
 ;;; Set the various swap files
   (setq ff-other-file-alist
-		'(("\\.cpp$" (".h"))
-		  ("\\.h$" (".cpp" ".cc" ".c" ".C"))
-		  ("\\.c$" (".h"))
-		  ("\\.C$" (".h"))
-		  ("\\.cc$" (".h"))
+		'(("\\.cpp\\'" (".h" ".hpp" ".ipp" ".tpp"))
+		  ("\\.h\\'" (".cpp" ".cc" ".c" ".C"))
+		  ("\\.hh\\'" (".cpp" ".cc" ".c" ".C"))
+		  ("\\.c\\'" (".h"))
+		  ("\\.C\\'" (".h"))
+		  ("\\.cc\\'" (".h" ".hh"))
+          ("\\.ipp\\'" (".hpp" ".cpp" ".tpp"))
+          ("\\.hpp\\'" (".ipp" ".cpp" ".tpp"))
+          ("\\.tpp\\'" (".hpp" ".cpp" ".ipp"))
+          ("\\.ixx\\'" (".hxx" ".cxx"))
+          ("\\.hxx\\'" (".ixx" ".cxx"))
 		  ("\\.tcc$" (".h"))))
   (let ((inc-dir-list '("."
 						"/usr/include"
