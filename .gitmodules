@@ -7,3 +7,6 @@
 [submodule "site-elisp/yaml-mode"]
 	path = site-elisp/yaml-mode
 	url = https://github.com/yoshiki/yaml-mode.git
+[submodule "site-elisp/python-mode"]
+	path = site-elisp/python-mode
+	url = https://gitlab.com/python-mode-devs/python-mode.git
