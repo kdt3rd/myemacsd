@@ -18,6 +18,15 @@
   (lua-default-application "/usr/bin/lua")
   )
 
+(use-package python-mode
+  :load-path (lambda () (expand-file-name "site-elisp/python-mode" user-emacs-directory))
+  :mode (("\\.py\\'" . python-mode))
+  :bind (:map python-mode-map
+              ("\C-backspace" . backward-kill-word))
+  :config
+  (setq indent-tabs-mode nil)
+)
+
 (use-package yaml-mode
   :load-path (lambda () (expand-file-name "site-elisp/yaml-mode" user-emacs-directory))
   :mode (("\\.yaml\\'" . yaml-mode)
@@ -77,7 +86,6 @@
 
 (eval-when-compile
   (require 'text-mode)
-  (require 'python-mode)
   (require 'perl-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -193,17 +201,11 @@
   (auto-fill-mode 1)
 )
 
-(defun my-python-mode-hook()
-  (setq indent-tabs-mode nil)
-  (define-key python-mode-map (kbd "<C-backspace>") 'backward-kill-word)
-)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (add-hook 'text-mode-hook 'my-text-mode-hook)
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 (add-hook 'perl-mode-hook 'my-perl-mode-hook)
-(add-hook 'python-mode-hook 'my-python-mode-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -234,7 +236,6 @@
                 ("\\.md\\.html$"   . markdown-mode)
                 ("\\.pl$" . perl-mode)
                 ("\\.pm$" . perl-mode)
-                ("\\.py$" . python-mode)
                 ("\\.ninja$" . ninja-mode)
                 ("\\.html$" . web-mode)
                 ("\\.js$" . javascript-mode)
