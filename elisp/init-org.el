@@ -109,7 +109,7 @@
   )
 
 ;; enable bable to handle a few langs
-(use-package graphviz-dot-mode
+(use-package graphviz-dot-mode)
 (use-package gnuplot)
 (org-babel-do-load-languages
  'org-babel-load-languages
