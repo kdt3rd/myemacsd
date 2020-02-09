@@ -125,6 +125,7 @@
 
 ;; TODO: is this safe
 ;(add-hook 'before-save-hook #'delete-trailing-whitespace-except-current-line)
+;(add-hook 'before-save-hook #'delete-trailing-whitespace)
 (set-fill-column 80)
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
@@ -138,12 +139,18 @@
 (setq visible-bell t)
 ;(setq ring-bell-function 'ignore)
 
+(setq mouse-yank-at-point t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc flags
 
 (setq make-backup-files t)
 (setq delete-old-versions t) ; silently clean up old versions
 (setq version-control t) ; Allow numbered backups
+(setq vc-follow-symlinks t)
+
+(global-font-lock-mode t)
+(global-auto-revert-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -155,5 +162,13 @@
 (global-set-key (kbd "C-x k") 'my:kill-current-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-hook 'before-save-hook
+          (lambda ()
+            (when buffer-file-name
+              (let ((dir (file-name-directory buffer-file-name)))
+                (when (and (not (file-exists-p dir))
+                           (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
+                  (make-directory dir t))))))
 
 (provide 'init-global-config)

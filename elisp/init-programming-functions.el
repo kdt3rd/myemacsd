@@ -185,210 +185,7 @@
 					(if ok
 						(find-file openfilename)))))))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; Functions for cleaning up source code
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-(defun global-cleanup-file ()
-  "Perform a general cleanup of a source or header file"
-  (interactive)
-  (save-excursion
-	(buffer-disable-undo)
-
-	; fix up any if( with if (
-	(beginning-of-buffer)
-	(replace-regexp "\\([\t ]\\)\\(if\\|while\\|for\\|switch\\)(" "\\1\\2 (" )
-
-	; fix up any ifndef - define header wrappers so they match the filename
-;	(if (string-match source-header-ext-regexp (buffer-name))
-;		(let ((bufname (buffer-name))
-;			  defname
-;			  defstring)
-;		  (setq defname (concat "__" (file-name-sans-extension bufname) "_"
-;								(file-name-extension bufname) "__" ))
-;		  (setq defstring (concat
-;						   "#ifndef " defname "\n"
-;						   "#define " defname "\n"))
-;		  (beginning-of-buffer)
-;		  (if (search-forward-regexp (concat 
-;									  "^#ifndef[ \t]+\\([a-zA-Z_][a-zA-Z0-9_]*\\)[ \t]*[\n]"
-;									  "#define[ \t]+\\([a-zA-Z_][a-zA-Z0-9_]*\\)[ \t]*[\n]")
-;									 nil t)
-;			  (replace-match defstring t t ))))
-
-;	(beginning-of-buffer)
-;	(replace-regexp "^\\([ ]*\\)\t" "\\1    ")
-
-	; clean up any blank lines with white space only
-	(beginning-of-buffer)
-	(replace-regexp "^[\t ]+$" "")
-
-;;	(beginning-of-buffer)
-;;	(replace-string "OS_" "PC")
-
-	; cleanup old macros and stuff
-;;	(beginning-of-buffer)
-;;	(replace-regexp "NOTNULL([\t ]*\\([^\t )]+\\)[\t ]*)" "\\1" )
-	;;;;;;; NEED MORE HERE...
-
-	(buffer-enable-undo)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;; find-assignment and align-equals align assignment statements for a region
-;; originally from Paul Hudson
-(defun find-assignment ()
-  (if (re-search-forward
-	   "[^<>=!]=\\|\\+=\\|-=\\|\\*=\\|/=\\|&=\\||=\\|\\^=\\|<<=\\|>>="
-	   (save-excursion (end-of-line) (point)) t)
-      (progn
-		(goto-char (match-beginning 0))
-		(if (looking-at ".==")
-			nil
-		  (if (looking-at "\\+=\\|-=\\|\\*=\\|/=\\|&=\\||=\\|\\^=\\|<<=\\|>>=")
-			  (set-mark (match-end 0))
-			(forward-char 1)
-			(set-mark (1+ (point))))
-		  (delete-horizontal-space)
-		  t))
-    nil))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-(defun align-equals (start end)
-  "make the first assignment operator on each line line up vertically"
-  (interactive "*r")
-  (save-excursion
-	(let ((indent 0))
-	  (indent-region start end)
-	  (narrow-to-region start end)
-	  (beginning-of-buffer)
-	  (while (not (eobp))
-		(if (find-assignment)
-			(progn
-			  (exchange-point-and-mark)
-			  (setq indent (max indent (current-column)))
-			  (delete-horizontal-space)
-			  (insert " ")))
-		(forward-line 1))
-	  (beginning-of-buffer)
-	  (while (not (eobp))
-		(if (find-assignment)
-			(indent-to-column (1+ (- indent  (- (mark) (point))))))
-		(forward-line 1)))
-	(widen)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-(defun align-vars (start end)
-  "Aligns c/c++ variable declaration names on the same column, with beginning and end taken from selected region."
-  (interactive "*r")
-  (save-excursion
-    (let (bol eol expr-end
-			  (max-col 0) col
-			  (max-ptr 0)
-			  poslist curpos)
-      (goto-char end)
-      (if (not (bolp))
-		  (setq end (line-end-position)))
-      (goto-char start)
-      (while (and (> end (point)) (not (eobp)))
-		(setq bol (line-beginning-position))
-		(setq eol (line-end-position))
-		(beginning-of-line)
-		(setq expr-end (point))
-		(if (search-forward-regexp (concat "^[ \t]*\\("
-										   "[a-zA-Z\\_][a-zA-Z0-9\\_:]*\\|"
-										   "[a-zA-Z\\_][a-zA-Z0-9\\_:]*[ \t]*<[^>]+>\\|"
-										   "\\)[ \t]+[^;]") eol t)
-			(let ()
-			  (setq expr-end (match-end 1))
-			  (while (search-forward-regexp "\\([a-zA-Z][a-zA-Z0-9\\_:]*\\(<[^>]+>\\)?\\)[ \t]+[^;=]" eol t)
-				(setq expr-end (match-end 1)))
-			  (goto-char expr-end)
-			  (setq col (current-column))
-			  (if (search-forward-regexp (concat "\\([\\*&]+[ \t]*\\)?"
-												 "\\([a-zA-Z\\_][a-zA-Z0-9\\_]*\\)[ \t]*\\(\\[[^\\]]+\\]\\)?\\([ \t]*=[ \t]*[^;,]+\\)?"
-												 "\\([ \t]*,[ \t]*\\([a-zA-Z\\_][a-zA-Z0-9\\_]*\\)[ \t]*\\(\\[[^\\]]+\\]\\)?\\([ \t]*=[ \t]*[^;,]+\\)?\\)*"
-												 "[ \t]*;$") eol t)
-;				  (let ((name-col-end 0))
-				  (let ((name-col-end (- (match-beginning 2) (match-beginning 0))))
-					(if (> name-col-end max-ptr)
-						(setq max-ptr name-col-end))
-;					(message (format "name-col-end %d max-ptr %d" name-col-end max-ptr))
-					(setq poslist (cons (list t expr-end col (match-beginning 0) name-col-end) poslist))
-					(if (> col max-col)
-						(setq max-col col))
-					(beginning-of-next-line))
-				(let ()
-				  (setq poslist (cons (list nil nil nil nil nil) poslist))
-				  (message "check for rest of line failed" )
-				  (beginning-of-next-line))))
-		  (let ()
-			(setq poslist (cons (list nil nil nil nil nil) poslist))
-			(message "initial check for var decl failed" )
-			(beginning-of-next-line))))
-      (setq curpos poslist)
-      (while curpos
-		(let* ((pos (car curpos))
-			   (ok (car pos))
-			   (col (car (cdr (cdr pos))))
-			   (col-end (car (cdr (cdr (cdr pos)))))
-			   (col-end-name (car (cdr (cdr (cdr (cdr pos))))))
-			   (abs-pos (car (cdr pos))))
-		  (if ok
-			  (let ()
-				(goto-char abs-pos)
-				(delete-region abs-pos col-end)
-				(insert-string (make-string (+ (+ (- max-col col) 1) (- max-ptr col-end-name)) 32)))))
-		(setq curpos (cdr curpos))))))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;
-;; Custom function to get rid of spaces at the end of all lines
-;;
-(defun remove-eol-spaces ()
-  "Remove spaces from the end of lines."
-  (interactive)
-  (save-excursion
-	(goto-char (point-min))
-	(replace-regexp "[\t ]+$" "")))
-
-;;
-;; Custom function to get rid of spaces at the end of all lines
-;;
-(defun remove-space-tabs ()
-  "Remove space-tab pairs from lines."
-  (interactive)
-  (save-excursion
-	(goto-char (point-min))
-	(replace-regexp " \t" "\t" )))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; Program editing convienence functions
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 ;; When TAB is hit, do the dynamic completion if next to a character,
 ;; otherwise do the normal thing...
@@ -409,9 +206,7 @@
 		(t (indent-according-to-mode)))
   )
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 ;; add a string in front of all lines in the region
 (defun prepend-string-to-range (start end s)
@@ -431,8 +226,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-                                             
 ;; remove a string from the beginning of all lines in the region
 (defun unprepend-string-to-range (start end s)    
   "Remove a string from the front of all lines in the region."
@@ -449,9 +242,7 @@
             (delete-region (match-beginning 0) (match-end 0)))
         (forward-line 1)))))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 ;; add a string to the end of all lines in the region
 (defun append-string-to-range (start end s)

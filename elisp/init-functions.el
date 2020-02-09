@@ -55,5 +55,5 @@
           (narrow-to-region (+ end 2) (point-max))
           (delete-trailing-whitespace)
           (widen))))))
-
+  
 (provide 'init-functions)

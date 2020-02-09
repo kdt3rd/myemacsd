@@ -21,9 +21,6 @@
 
 (global-set-key "\C-cd" 'copy-region-as-kill)
 (global-set-key "\C-c\C-i" 'indent-region)
-(global-set-key (kbd "C-=") 'align-equals)
-(global-set-key (kbd "C-,") 'align-vars)
-;;;(global-set-key (kbd "C-.") 'bounce-sexp)
 
 ;(global-set-key "\C-xc" 'toggle-source-header)
 (global-set-key "\C-xc" 'ff-find-other-file)
@@ -37,7 +34,6 @@
 ;(global-set-key [C-tab] 'bury-buffer)
 
 ;;; Set up some function keys
-(global-set-key [f2] 'global-cleanup-file)
 (global-set-key [f3] 'query-replace)
 (global-set-key [S-f3] 'replace-string)
 ;(global-set-key [f4] 'replace-string)
@@ -58,7 +54,7 @@
 ;(global-set-key [f10] '(lambda ()
 ;                         (interactive)
 ;                         (expand-class-functions (current-buffer))))
-(global-set-key [(f10)] 'gnuplot-make-buffer)
+;(global-set-key [(f10)] 'gnuplot-make-buffer)
 ;(global-set-key [f12] 'goto-line)
 
 ; TODO: put this back if we turn off smooth scroll

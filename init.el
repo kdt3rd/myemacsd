@@ -131,6 +131,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
 (require 'init-functions)
 (require 'init-programming-functions)
 (require 'init-search)
+(require 'init-org)
 (require 'init-crux)
 
 (require 'init-programming-tools)

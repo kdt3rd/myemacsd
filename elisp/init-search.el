@@ -23,6 +23,7 @@
   (ivy-use-virtual-buffers t)
   (ivy-height 10)
   (ivy-on-del-error-function nil)
+  (ivy-use-selectable-prompt t)
 ;;  (ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
   (ivy-count-format "(%d/%d) ")
   (ivy-re-builders-alist '((swiper . ivy--regex-plus)
