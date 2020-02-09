@@ -4,5 +4,6 @@ amx-items
 auto-save-list/*
 elpa/*
 projectile-bookmarks.eld
+places
 recentf*
 transient/*

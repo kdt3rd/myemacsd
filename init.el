@@ -37,7 +37,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
 
 ;; load path bits
 (defun update-to-load-path (folder)
-  "Add folder and its subdirectories to `load-path'."
+  "Add folder FOLDER and its subdirectories to `load-path'."
   (let ((base folder))
     (unless (member base load-path)
       (add-to-list 'load-path base))
@@ -59,6 +59,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
       package-archives
       '(("gnu"   . "http://elpa.gnu.org/packages/")
         ("melpa" . "https://melpa.org/packages/")
+        ("org" . "https://orgmode.org/elpa/")
         ;; ("cselpa" . "https://elpa.thecybershadow.net/packages/")
         ;; ("melpa-cn" . "http://mirrors.cloud.tencent.com/elpa/melpa/")
         ;; ("gnu-cn"   . "http://mirrors.cloud.tencent.com/elpa/gnu/")
@@ -73,9 +74,14 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
   (setq use-package-verbose (not (bound-and-true-p byte-compile-current-file))))
 
 ;; pull in use-package package, too handy not to
-(unless (package-installed-p 'use-package)
+(when (not (package-installed-p 'use-package))
   (package-refresh-contents)
   (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package)
+  (require 'use-package-ensure)
+  (require 'bind-key))
 
 (eval-and-compile
   (setq use-package-always-ensure t)
@@ -83,10 +89,15 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
   (setq use-package-compute-statistics t)
   (setq use-package-enable-imenu-support t))
 
-(eval-when-compile
-  (require 'use-package)
-  (require 'bind-key))
+;; auto compile packages, use newest
+(use-package auto-compile
+  :config (auto-compile-on-load-mode))
+(setq load-prefer-newer t)
 
+;; some things need to disable TLS 1.3?
+;;(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+;; 
 ;; turn on auto-update
 (use-package auto-package-update
   :if (not (daemonp))
@@ -98,26 +109,37 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
   :config
   (auto-package-update-maybe))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;; do we need this? hides or abbreviation of mode line displays...
-(use-package diminish)
+;;(use-package diminish)
+;; minions hides all the minor mode lines instead of having to
+;; add a diminish call to every use-package definition
+(use-package minions
+  :config
+  (setq minions-mode-line-lighter ""
+        minions-mode-line-delimiters '("" . ""))
+  (minions-mode 1))
+
+(require 'init-const)
+(require 'init-global-config)
+(when *sys/gui*
+  (require 'init-font))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'init-const)
 (require 'init-functions)
 (require 'init-programming-functions)
-(require 'init-global-keys)
-(require 'init-global-config)
 (require 'init-search)
-
 (require 'init-crux)
-
-(require 'init-font)
 
 (require 'init-programming-tools)
 ;(require 'init-lsp)
 
 (require 'init-programming-modes)
+
+;;; set up all the global key bindings
+(require 'init-global-keys)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -136,6 +158,8 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
  '(scroll-bar-mode nil)
  '(show-paren-mode t nil (paren))
  '(tool-bar-mode nil nil (tool-bar)))
+(put 'upcase-region 'disabled nil)
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -146,7 +170,6 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
  '(fringe ((((class color) (background dark)) nil)))
  '(header-line ((((class color grayscale) (background dark)) (:inherit mode-line))))
  '(mode-line ((t (:background "black" :foreground "gainsboro"))))
- '(snails-content-buffer-face ((t (:background "#111" :height 110))))
- '(snails-header-line-face ((t (:inherit font-lock-function-name-face :underline t :height 1.1))))
- '(snails-input-buffer-face ((t (:background "#222" :foreground "gold" :height 110))))
  '(trailing-whitespace ((((class color) (background dark)) (:background "magenta")))))
+
+;;; init.el ends here

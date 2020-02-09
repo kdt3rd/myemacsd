@@ -1,44 +1,86 @@
+;;; Sets up functions and things related to fonts
 
-(eval-when-compile
-  (require 'init-const))
+;;; Code:
 
-(when *sys/gui*
-  (custom-set-faces
-   '(default ((t (:inherit nil :stipple nil :background "black" :foreground "gainsboro" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 160 :width normal :foundry "unknown" :family "Inconsolata"))))
-   '(cursor ((t (:background "yellow" :foreground "black"))))
-   '(fringe ((((class color) (background dark)) nil)))
-   '(header-line ((((class color grayscale) (background dark)) (:inherit mode-line))))
-   '(mode-line ((t (:background "black" :foreground "gainsboro"))))
-   '(trailing-whitespace ((((class color) (background dark)) (:background "magenta")))))
-  )
+(setq my:default-font "Inconsolata")
+(setq my:default-font-size 14)
+(setq my:current-font-size my:default-font-size)
+(setq my:font-change-increment 1.1)
 
-(global-font-lock-mode t)
+(defun my:font-name ()
+  "Return a string with the font name and size."
+  (concat my:default-font "-" (number-to-string my:current-font-size)))
+
+(defun my:set-font-size ()
+  "Set the font to the default font plus current size."
+  (let ((font-name (my:font-name)))
+    (if (assoc 'font default-frame-alist)
+        (setcdr (assoc 'font default-frame-alist) font-name)
+      (add-to-list 'default-frame-alist (cons 'font font-name)))
+    (set-frame-font font-name)))
+
+(defun my:reset-font-size ()
+  "Reset font size to default."
+  (interactive)
+  (setq my:current-font-size my:default-font-size)
+  (my:set-font-size))
+
+(defun my:increase-font-size ()
+  "Increase current font size by increment."
+  (interactive)
+  (setq my:current-font-size
+        (ceiling (* my:current-font-size my:font-change-increment)))
+  (my:set-font-size))
+
+(defun my:decrease-font-size ()
+  "Decrease current font size by increment."
+  (interactive)
+  (setq my:current-font-size
+        (max 1
+             (floor (/ my:current-font-size my:font-change-increment))))
+  (my:set-font-size))
+
+(define-key global-map (kbd "C-)") 'my:reset-font-size)
+(define-key global-map (kbd "C-+") 'my:increase-font-size)
+(define-key global-map (kbd "C--") 'my:decrease-font-size)
+;(define-key global-map (kbd "C-=") 'my:increase-font-size)
+;(define-key global-map (kbd "C-_") 'my:decrease-font-size)
+
+;; Adjust font size like web browsers
+;;(global-set-key (kbd "C-+") #'text-scale-increase)
+;;(global-set-key (kbd "C--") #'text-scale-decrease)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(my:reset-font-size)
+;;(global-font-lock-mode t)
+(global-prettify-symbols-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; decorative types
 
-(let ( ;( my-extra-types
-		; '( "\\([UI]i*\\)nt\\(8\\|16\\|32\\|64\\)" "Index"
-		;	"Float\\(32\\|64\\)" "sstring" "RE_\\(\\w*\\)Coord" ) )
-	   ( my-mode-additions
-		 '( ("\\<\\(TODO\\):" . font-lock-warning-face)
-			("\\<\\(PROGRAMMING_ERROR\\|ASSERT\\w*\\|DEBUG_ABORT\\w*\\|BADPLACE\\w*\\)\\>" . font-lock-warning-face)
-			("\\<\\(PRECONDITION\\|POSTCONDITION\\|CHECK_INVARIANT\\|REQUIRE\\|ENSURE\\|STATIC_CHECK\\)\\>" . font-lock-constant-face)
-			) )
-	   )
-;  (setq c-font-lock-extra-types 
-;		(append c-font-lock-extra-types my-extra-types))
-;  (setq c++-font-lock-extra-types 
-;		(append c++-font-lock-extra-types my-extra-types ) )
+;;(let ( ;( my-extra-types
+;;		; '( "\\([UI]i*\\)nt\\(8\\|16\\|32\\|64\\)" "Index"
+;;		;	"Float\\(32\\|64\\)" "sstring" "RE_\\(\\w*\\)Coord" ) )
+;;	   ( my-mode-additions
+;;		 '( ("\\<\\(TODO\\):" . font-lock-warning-face)
+;;			("\\<\\(PROGRAMMING_ERROR\\|ASSERT\\w*\\|DEBUG_ABORT\\w*\\|BADPLACE\\w*\\)\\>" . font-lock-warning-face)
+;;			("\\<\\(PRECONDITION\\|POSTCONDITION\\|CHECK_INVARIANT\\|REQUIRE\\|ENSURE\\|STATIC_CHECK\\)\\>" . font-lock-constant-face)
+;;			) )
+;;	   )
+;;;  (setq c-font-lock-extra-types 
+;;;		(append c-font-lock-extra-types my-extra-types))
+;;;  (setq c++-font-lock-extra-types 
+;;;		(append c++-font-lock-extra-types my-extra-types ) )
+;;
+;;  (font-lock-add-keywords 'c-mode my-mode-additions)
+;;  (font-lock-add-keywords 'c++-mode my-mode-additions)
+;;  (font-lock-add-keywords 'objc-mode my-mode-additions)
+;;)
 
-  (font-lock-add-keywords 'c-mode my-mode-additions)
-  (font-lock-add-keywords 'c++-mode my-mode-additions)
-  (font-lock-add-keywords 'objc-mode my-mode-additions)
-)
-
-(setq font-lock-support-mode 'jit-lock-mode)
-(setq font-lock-maximum-decoration t)
-(setq-default font-lock-multiline t)
+;;(setq font-lock-support-mode 'jit-lock-mode)
+;;(setq font-lock-maximum-decoration t)
+;;(setq-default font-lock-multiline t)
 ;(setq lazy-lock-defer-time 1)
 ;(setq lazy-lock-defer-on-the-fly nil)
 ;(setq lazy-lock-defer-on-scrolling nil)

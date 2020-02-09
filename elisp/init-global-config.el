@@ -58,7 +58,7 @@
 ;; (setq x-alt-keysym 'meta)
 
 ;; When buffer is closed, saves the cursor location
-(save-place-mode 1)
+(save-place-mode t)
 
 ;; Set history-length longer
 (setq-default history-length 500)
@@ -147,16 +147,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(custom-set-variables
- '(auto-image-file-mode t nil (image-file))
- '(blink-cursor-mode nil)
- '(case-fold-search t)
- '(frame-background-mode (quote dark))
- '(menu-bar-mode nil nil (menu-bar))
- '(mm-inline-large-images t)
- '(save-place t nil (saveplace))
- '(scroll-bar-mode nil)
- '(show-paren-mode t nil (paren))
- '(tool-bar-mode nil nil (tool-bar)))
+;; if we hit kill buffer, why wouldn't we want to kill the current buffer???
+(defun my:kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
+(global-set-key (kbd "C-x k") 'my:kill-current-buffer)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'init-global-config)

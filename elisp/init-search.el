@@ -5,34 +5,51 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package ivy
-  :diminish
-  :init
-  (use-package amx :defer t)
-  (use-package counsel :diminish :config (counsel-mode 1))
-  (use-package swiper :defer t)
-  (ivy-mode 1)
-  :bind
-  (("C-s" . swiper-isearch)
-   ("C-z s" . counsel-rg)
-   ("C-z b" . counsel-buffer-or-recentf)
-   ("C-z C-b" . counsel-ibuffer)
-   (:map ivy-minibuffer-map
-         ("C-r" . ivy-previous-line-or-history)
-         ("M-RET" . ivy-immediate-done))
-   (:map counsel-find-file-map
-         ("C-~" . counsel-goto-local-home)))
+;;  :diminish
+;;  :init
+;;  (use-package amx :defer t)
+;;  (ivy-mode 1)
+;;  :bind
+;;  (("C-s" . swiper-isearch)
+;;   ("C-S-h" . counsel-ag)
+;;   ("C-x b" . counsel-buffer-or-recentf)
+;;   ("C-x C-b" . counsel-ibuffer)
+;;   (:map ivy-minibuffer-map
+;;         ("C-r" . ivy-previous-line-or-history)
+;;         ("M-RET" . ivy-immediate-done))
+;;   (:map counsel-find-file-map
+;;         ("C-~" . counsel-goto-local-home)))
   :custom
   (ivy-use-virtual-buffers t)
   (ivy-height 10)
   (ivy-on-del-error-function nil)
-  (ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
-  (ivy-count-format "[%d/%d]")
-  (ivy-wrap t)
+;;  (ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
+  (ivy-count-format "(%d/%d) ")
+  (ivy-re-builders-alist '((swiper . ivy--regex-plus)
+                           (t . ivy--regex-fuzzy)))
   :config
-  (defun counsel-goto-local-home ()
-      "$HOME"
-      (interactive)
-    (ivy--cd "~/")))
+  (ivy-mode 1)
+  )
+;;  (ivy-wrap t)
+;;  :config
+;;  (defun counsel-goto-local-home ()
+;;      "$HOME"
+;;      (interactive)
+;;    (ivy--cd "~/")))
+;;
+;;(use-package swiper)
+
+(use-package counsel
+  :bind
+  ("M-x" . 'counsel-M-x)
+  ("C-s" . 'swiper)
+  ("C-S-h" . 'counsel-ag)
+  :config
+  (counsel-mode 1)
+  (use-package flx)
+  (use-package smex)
+  )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

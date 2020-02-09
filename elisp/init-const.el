@@ -1,6 +1,9 @@
 ;; Miscellaneous constants....
-(setq user-full-name "Kimball Thurston")
-(setq user-mail-address "kdt3rd@gmail.com")
+(setq user-full-name "Kimball D. Thurston III"
+      user-mail-address "kdt3rd@gmail.com"
+      calendar-latitude -41.2865
+      calendar-longitude 174.7762
+      calendar-location-name "Wellington, New Zealand")
 
 (defconst *sys/gui* (display-graphic-p) "GUI Emacs")
 

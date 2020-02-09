@@ -9,10 +9,6 @@
 
 (global-set-key (kbd "C-x C-l") #'toggle-truncate-lines)
 
-;; Adjust font size like web browsers
-(global-set-key (kbd "C-+") #'text-scale-increase)
-(global-set-key (kbd "C--") #'text-scale-decrease)
-
 ;; Move up/down paragraph
 (global-set-key (kbd "M-n") #'forward-paragraph)
 (global-set-key (kbd "M-p") #'backward-paragraph)

@@ -11,9 +11,12 @@
 (setq site-run-file nil)
 
 (menu-bar-mode -1)
-(unless (and (display-graphic-p) (eq system-type 'darwin))
-  (push '(menu-bar-lines . 0) default-frame-alist))
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
+(tool-bar-mode 0)
+(scroll-bar-mode -1)
+(set-window-scroll-bars (minibuffer-window) nil nil)
+;(unless (and (display-graphic-p) (eq system-type 'darwin))
+;  (push '(menu-bar-lines . 0) default-frame-alist))
+;(push '(tool-bar-lines . 0) default-frame-alist)
+;(push '(vertical-scroll-bars) default-frame-alist)
 
 (provide 'early-init)
