@@ -12,11 +12,15 @@
 (use-package company
   :custom
   (company-global-modes '(not shell-mode shell-script-mode))
+  (company-idle-delay 0)
+  (company-selection-wrap-around t)
+  (company-minimum-prefix-length 1)
+  :config
   (delete 'company-files company-backends)
   :bind
   ("M-/" . company-complete-common)
   )
-(add-hook 'after-init-hook 'global-company-mode)
+(add-hook 'after-init-hook (lambda () (global-company-mode) (company-tng-mode)))
 
 ;;;; see memacs-d init-company.el
 ;;;; they enable company- tabnine, lsp, and box

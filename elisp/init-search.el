@@ -44,7 +44,7 @@
   :bind
   ("M-x" . 'counsel-M-x)
   ("C-s" . 'swiper)
-  ("C-S-h" . 'counsel-ag)
+  ("C-S-h" . 'counsel-rg)
   :config
   (counsel-mode 1)
   (use-package flx)
