@@ -74,7 +74,7 @@
 (setq-default compilation-ask-about-save nil) ; save all buffers on `compile'
 (setq-default compilation-scroll-output t)
 
-(setq-default frame-title-format '(user-login-name "@" system-name " - %f"))
+(setq-default frame-title-format '("%b%* - " user-login-name "@" system-name))
 (setq icon-title-format "Emacs - %b")
 
 (setq message-log-max nil)
@@ -96,6 +96,7 @@
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
 (setq inhibit-startup-screen t)
+(setq inhibit-splash-screen t)
 
 ;(setq initial-major-mode 'text-mode)
 

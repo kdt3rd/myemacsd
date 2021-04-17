@@ -135,6 +135,9 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
 (require 'init-crux)
 
 (require 'init-programming-tools)
+; ein provides jupyter
+;(require 'init-ein)
+
 ;(require 'init-lsp)
 
 (require 'init-programming-modes)

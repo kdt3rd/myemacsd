@@ -34,6 +34,7 @@
 ;(global-set-key [C-tab] 'bury-buffer)
 
 ;;; Set up some function keys
+(global-set-key [f1] 'eshell)
 (global-set-key [f3] 'query-replace)
 (global-set-key [S-f3] 'replace-string)
 ;(global-set-key [f4] 'replace-string)

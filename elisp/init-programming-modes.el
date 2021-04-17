@@ -9,13 +9,37 @@
 (show-paren-mode t)
 (setq show-paren-delay 0.0)
 
+;;; shell modes
+(use-package xterm-color
+  :config
+  (setq comint-output-filter-functions
+        (remove 'ansi-color-process-output comint-output-filter-functions))
+  (add-hook 'shell-mode-hook
+            (lambda ()
+              ;; Disable font-locking in this buffer to improve performance
+              (font-lock-mode -1)
+              ;; Prevent font-locking from being re-enabled in this buffer
+              (make-local-variable 'font-lock-function)
+              (setq font-lock-function (lambda (_) nil))
+              (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t)))
+  ;; Also set TERM accordingly (xterm-256color) in the shell itself.
+  :init
+  (setenv "TERM" "xterm-256color")
+  )
+
+(use-package eterm-256color
+  :ensure t
+  :config
+  (add-hook 'term-mode-hook #'eterm-256color-mode)
+  )
+
 ;;; lua-mode site-lisp configuration
 (use-package lua-mode
   :load-path (lambda () (expand-file-name "site-elisp/lua-mode" user-emacs-directory))
   :mode (("\\.lua\\'" . lua-mode)
       ("construct\\'" . lua-mode))
   :config
-  (setq indent-tabs-mode t)
+  (setq indent-tabs-mode nil)
   (setq lua-indent-level 4)
   :custom
   (lua-default-application "/usr/bin/lua")
@@ -52,9 +76,8 @@
   :bind (:map yaml-mode-map
               ("\C-m" . newline-and-indent))
   :config
-  (defun my-yaml-mode-hook ()
-    (auto-fill-mode 0))
-  (add-hook 'yaml-mode-hook 'my-yaml-mode-hook)
+  (add-hook 'yaml-mode-hook '(lambda ()
+                               (auto-fill-mode 0)))
   )
 
 (use-package json-mode

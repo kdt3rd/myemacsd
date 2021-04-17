@@ -43,10 +43,17 @@
 (add-hook 'comint-output-filter-functions 'ansi-code-ignore)
 
 
-(defun my-find-string-in-files (p dir)
+(defun my-find-string-in-files-ack (p dir)
    (interactive "sPattern to find: \nDDirectory to start search for %s: ")
    (let ((buffer-name "*Find Results*"))
 	 (make-comint-in-buffer "Ack" buffer-name "/bin/zsh" nil "-c" (concat "cd " dir "; ack --color --heading --break " p))
+	 (switch-to-buffer buffer-name)
+	 ))
+
+(defun my-find-string-in-files-rg (p dir)
+   (interactive "sPattern to find: \nDDirectory to start search for %s: ")
+   (let ((buffer-name "*Find Results*"))
+	 (make-comint-in-buffer "File Search" buffer-name *rg* nil "-p" p dir)
 	 (switch-to-buffer buffer-name)
 	 ))
 
@@ -425,7 +432,7 @@
   (interactive)
 
   (start-comment-block)
-  (comment "Copyright (c) 2019 Kimball Thurston\n")
+  (comment (concat "Copyright (c) " (format-time-string "%Y") " Kimball Thurston\n"))
   (comment "SPDX-License-Identifier: MIT\n")
   (end-comment-block)
   )

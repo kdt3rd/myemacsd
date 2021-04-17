@@ -10,8 +10,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package company
+  :custom
+  (company-global-modes '(not shell-mode shell-script-mode))
+  (delete 'company-files company-backends)
   :bind
-    ("M-/" . company-complete-common))
+  ("M-/" . company-complete-common)
+  )
 (add-hook 'after-init-hook 'global-company-mode)
 
 ;;;; see memacs-d init-company.el
@@ -55,6 +59,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;(use-package irony
+;  :defer t
+;  :hook ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
   :bind
@@ -70,8 +80,8 @@
         ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
         ("C-S-<backspace>" . sp-splice-sexp-killing-around)
         ("C-]" . sp-select-next-thing-exchange))
-  :custom
-  (sp-escape-quotes-after-insert nil)
+  ;:custom
+  ;(sp-escape-quotes-after-insert nil)
   ;;; don't use default key bindings as I prefer
   ;;; control- arrows to move between words
   ;(sp-base-key-bindings 'sp)
@@ -91,11 +101,12 @@
   ;;; see above
   ;;(sp-use-smartparens-bindings)
 
-  ;; Smartparens is broken in `cc-mode' as of Emacs 27. See
-  ;; https://github.com/Fuco1/smartparens/issues/963
-  (unless (version< emacs-version "27")
-    (dolist (fun '(c-electric-paren c-electric-brace))
-      (add-to-list 'sp--special-self-insert-commands fun)))
+  ;; This now appears fixed...
+  ;;;; Smartparens is broken in `cc-mode' as of Emacs 27. See
+  ;;;; https://github.com/Fuco1/smartparens/issues/963
+  ;;(unless (version< emacs-version "27")
+  ;;  (dolist (fun '(c-electric-paren c-electric-brace))
+  ;;    (add-to-list 'sp--special-self-insert-commands fun)))
   (defun bounce-sexp ()
     "Will bounce between matching parens just like % in vi"
     (interactive)
@@ -160,11 +171,21 @@
   :custom
   (projectile-completion-system 'ivy)
   :config
-  ;;(projectile-mode 1)
+  (setq projectile-mode-line-prefix "P")
+  (setq projectile-dynamic-mode-line t)
   (projectile-global-mode)
   (setq projectile-completion-system 'ivy)
-  (setq projectile-switch-project-action 'projectile-dired)
-  (setq projectile-require-project-root nil)
+  ;(setq projectile-switch-project-action 'projectile-dired)
+  ;(setq projectile-sort-order 'recentf)
+  (setq projectile-sort-order 'default)
+  ;;(setq projectile-indexing-method 'native)
+  (setq projectile-indexing-method 'alien)
+  (setq projectile-enable-caching t)
+  (setq projectile-file-exists-remote-cache-expire (* 10 60))
+  (setq projectile-file-exists-local-cache-expire (* 10 60))
+  ;(setq projectile-require-project-root nil)
+  :init
+  (projectile-mode +1)
   ;(add-to-list 'projectile-globally-ignored-directories "node_modules")
   )
 
@@ -174,6 +195,7 @@
   (("C-S-p" . counsel-projectile-find-file)
    ("C-S-h" . counsel-projectile-ag))
   :config
+  (setq projectile-switch-project-action 'counsel-projectile-find-file)
   (counsel-projectile-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -237,30 +259,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package yasnippet
-  :config
-  (use-package yasnippet-snippets :after yasnippet)
-  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-  (yas-global-mode 1)
-  (setq yas/indent-line nil)
-  ;;:hook ((prog-mode LaTeX-mode org-mode) . yas-minor-mode)
-  ;;:bind
-  ;;((:map yas-minor-mode-map ("C-c C-n" . yas-expand-from-trigger-key))
-  ;; (:map yas-keymap
-  ;;       (("TAB" . smarter-yas-expand-next-field)
-  ;;        ([(tab)] . smarter-yas-expand-next-field))))
-  ;;:config
-  ;;(yas-reload-all)
-  ;;(defun smarter-yas-expand-next-field ()
-  ;;  "Try to `yas-expand' then `yas-next-field' at current cursor position."
-  ;;  (interactive)
-  ;;  (let ((old-point (point))
-  ;;        (old-tick (buffer-chars-modified-tick)))
-  ;;    (yas-expand)
-  ;;    (when (and (eq old-point (point))
-  ;;               (eq old-tick (buffer-chars-modified-tick)))
-  ;;      (ignore-errors (yas-next-field)))))
-  )
+;; lots of snippets at
+;; https://github.com/AndreaCrotti/yasnippet-snippets.git
+;(use-package yasnippet
+;  :config
+;  (use-package yasnippet-snippets :after yasnippet)
+;  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+;  (yas-global-mode 1)
+;  (setq yas/indent-line nil)
+;  ;;:hook ((prog-mode LaTeX-mode org-mode) . yas-minor-mode)
+;  ;;:bind
+;  ;;((:map yas-minor-mode-map ("C-c C-n" . yas-expand-from-trigger-key))
+;  ;; (:map yas-keymap
+;  ;;       (("TAB" . smarter-yas-expand-next-field)
+;  ;;        ([(tab)] . smarter-yas-expand-next-field))))
+;  ;;:config
+;  ;;(yas-reload-all)
+;  ;;(defun smarter-yas-expand-next-field ()
+;  ;;  "Try to `yas-expand' then `yas-next-field' at current cursor position."
+;  ;;  (interactive)
+;  ;;  (let ((old-point (point))
+;  ;;        (old-tick (buffer-chars-modified-tick)))
+;  ;;    (yas-expand)
+;  ;;    (when (and (eq old-point (point))
+;  ;;               (eq old-tick (buffer-chars-modified-tick)))
+;  ;;      (ignore-errors (yas-next-field)))))
+;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -278,13 +302,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package let-alist)
-(use-package flycheck
-  :config
-  (add-hook 'markdown-mode-hook #'flycheck-mode)
-  (add-hook 'gfm-mode-hook #'flycheck-mode)
-  (add-hook 'text-mode-hook #'flycheck-mode)
-  (add-hook 'org-mode-hook #'flycheck-mode)
-  )
+;(use-package flycheck
+;  :config
+;  (add-hook 'markdown-mode-hook #'flycheck-mode)
+;  (add-hook 'gfm-mode-hook #'flycheck-mode)
+;  (add-hook 'text-mode-hook #'flycheck-mode)
+;  (add-hook 'org-mode-hook #'flycheck-mode)
+;  )
 ;;  :defer t
 ;;  :hook (prog-mode . flycheck-mode)
 ;;  :custom
@@ -293,20 +317,14 @@
 ;;  (flycheck-add-mode 'javascript-eslint 'js-mode)
 ;;  (flycheck-add-mode 'typescript-tslint 'rjsx-mode))
 
-(use-package flyspell
-  :config
-  (add-hook 'text-mode-hook 'turn-on-auto-fill)
-  (add-hook 'gfm-mode-hook 'flyspell-mode)
-  (add-hook 'org-mode-hook 'flyspell-mode)
-
-  (add-hook 'git-commit-mode-hook 'flyspell-mode)
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;(use-package irony
-;  :defer t
-;  :hook ())
+;(use-package flyspell
+;  :config
+;  (add-hook 'text-mode-hook 'turn-on-auto-fill)
+;  (add-hook 'gfm-mode-hook 'flyspell-mode)
+;  (add-hook 'org-mode-hook 'flyspell-mode)
+;
+;  (add-hook 'git-commit-mode-hook 'flyspell-mode)
+;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -1,6 +1,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package htmlize :defer t)
+(use-package ox-gfm :defer t)
+(use-package ox-reveal
+  :config
+  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
+
 ;; org mode settings
 (use-package org
   :ensure org-plus-contrib
@@ -90,6 +96,7 @@
   ;;;; export modes
   (require 'ox-md)
   (require 'ox-beamer)
+  (require 'ox-reveal)
 
   ;; skip prompt on evaluating code blocks
   (setq org-confirm-babel-evaluate nil)
@@ -131,12 +138,6 @@
 (use-package org-bullets
   :init
   (add-hook 'org-mode-hook 'org-bullets-mode))
-
-(use-package htmlize :defer t)
-(use-package ox-gfm :defer t)
-(use-package ox-reveal
-  :config
-  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

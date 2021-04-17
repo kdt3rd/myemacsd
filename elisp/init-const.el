@@ -1,9 +1,16 @@
 ;; Miscellaneous constants....
 (setq user-full-name "Kimball D. Thurston III"
       user-mail-address "kdt3rd@gmail.com"
+      user-login-name (getenv "USER")
       calendar-latitude -41.2865
       calendar-longitude 174.7762
       calendar-location-name "Wellington, New Zealand")
+
+(setq system-name
+      (replace-regexp-in-string
+       "\\(^[[:space:]\n]*\\|[[:space:]\n]*$\\)" "" ;; like perl chomp()
+       (with-output-to-string 
+         (call-process "/bin/hostname" nil standard-output nil))))
 
 (defconst *sys/gui* (display-graphic-p) "GUI Emacs")
 
@@ -21,6 +28,9 @@
   (or (executable-find "clangd")
       (executable-find "/usr/local/opt/llvm/bin/clangd"))
   "clangd")
+; we use the clang-format module, it finds it...
+;(defconst *clang-format* (executable-find "clang-format") "clang-format")
+(defconst *clang* (executable-find "clang") "clang")
 (defconst *gcc* (executable-find "gcc") "gcc")
 (defconst *git* (executable-find "git") "git")
 
