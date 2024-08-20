@@ -3,7 +3,7 @@
 
 ;; ein (jupyter) settings
 (use-package ein
-  :ensure t
+  :straight t
   :bind (("C-c I l" . ein:notebooklist-login)
          ("C-c I o" . ein:notebooklist-open))
 )

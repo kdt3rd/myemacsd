@@ -4,23 +4,26 @@
 
 ;; camelcase symbols as separate words...
 (use-package subword
+  :straight t
   :config (global-subword-mode 1))
+
 (setq compilation-scroll-output t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package company
-  :custom
-  (company-global-modes '(not shell-mode shell-script-mode))
-  (company-idle-delay 0)
-  (company-selection-wrap-around t)
-  (company-minimum-prefix-length 1)
-  :config
-  (delete 'company-files company-backends)
-  :bind
-  ("M-/" . company-complete-common)
-  )
-(add-hook 'after-init-hook (lambda () (global-company-mode) (company-tng-mode)))
+;;(use-package company
+;;  :straight t
+;;  :custom
+;;  (company-global-modes '(not shell-mode shell-script-mode))
+;;  (company-idle-delay 0)
+;;  (company-selection-wrap-around t)
+;;  (company-minimum-prefix-length 1)
+;;  :config
+;;  (delete 'company-files company-backends)
+;;  :bind
+;;  ("M-/" . company-complete-common)
+;;  )
+;;(add-hook 'after-init-hook (lambda () (global-company-mode) (company-tng-mode)))
 
 ;;;; see memacs-d init-company.el
 ;;;; they enable company- tabnine, lsp, and box
@@ -69,61 +72,64 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package smartparens
-  :hook (prog-mode . smartparens-mode)
-  :bind
-  (:map smartparens-mode-map
-        ("C-M-f" . sp-forward-sexp)
-        ("C-M-b" . sp-backward-sexp)
-        ("C-M-a" . sp-backward-down-sexp)
-        ("C-M-e" . sp-up-sexp)
-        ("C-M-w" . sp-copy-sexp)
-        ("C-M-k" . sp-change-enclosing)
-        ("M-k" . sp-kill-sexp)
-        ("C-." . bounce-sexp)
-        ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
-        ("C-S-<backspace>" . sp-splice-sexp-killing-around)
-        ("C-]" . sp-select-next-thing-exchange))
-  ;:custom
-  ;(sp-escape-quotes-after-insert nil)
-  ;;; don't use default key bindings as I prefer
-  ;;; control- arrows to move between words
-  ;(sp-base-key-bindings 'sp)
-  ;(sp-override-key-bindings
-  ; '(
-  ;   ("C-." . bounce-sexp)
-  ;   ("C-<left>" . nil)
-  ;   ("C-<right>" . nil)
-  ;   ("C-M-<left>" . nil)
-  ;   ("C-M-<right>" . nil)
-  ;   ))
-  :config
-  ;; Stop pairing single quotes in elisp
-  (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
-  (sp-local-pair 'org-mode "[" nil :actions nil)
-  (require 'smartparens-c)
-  ;;; see above
-  ;;(sp-use-smartparens-bindings)
-
-  ;; This now appears fixed...
-  ;;;; Smartparens is broken in `cc-mode' as of Emacs 27. See
-  ;;;; https://github.com/Fuco1/smartparens/issues/963
-  ;;(unless (version< emacs-version "27")
-  ;;  (dolist (fun '(c-electric-paren c-electric-brace))
-  ;;    (add-to-list 'sp--special-self-insert-commands fun)))
-  (defun bounce-sexp ()
-    "Will bounce between matching parens just like % in vi"
-    (interactive)
-    (let ((prev-char (char-to-string (preceding-char)))
-		  (next-char (char-to-string (following-char))))
-	  (cond ((string-match "[[{(<]" next-char) (sp-forward-sexp 1))
-		    ((string-match "[\]})>]" prev-char) (sp-backward-sexp 1))
-		    (t (error "%s" "Not on a paren, brace, or bracket")))))
-  )
+;tofix;(use-package smartparens
+;tofix;  :hook (prog-mode . smartparens-mode)
+;tofix;  :bind
+;tofix;  (:map smartparens-mode-map
+;tofix;        ("C-M-f" . sp-forward-sexp)
+;tofix;        ("C-M-b" . sp-backward-sexp)
+;tofix;        ("C-M-a" . sp-backward-down-sexp)
+;tofix;        ("C-M-e" . sp-up-sexp)
+;tofix;        ("C-M-w" . sp-copy-sexp)
+;tofix;        ("C-M-k" . sp-change-enclosing)
+;tofix;        ("M-k" . sp-kill-sexp)
+;tofix;        ("C-." . bounce-sexp)
+;tofix;        ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
+;tofix;        ("C-S-<backspace>" . sp-splice-sexp-killing-around)
+;tofix;        ("C-]" . sp-select-next-thing-exchange))
+;tofix;  ;:custom
+;tofix;  ;(sp-escape-quotes-after-insert nil)
+;tofix;  ;;; don't use default key bindings as I prefer
+;tofix;  ;;; control- arrows to move between words
+;tofix;  ;(sp-base-key-bindings 'sp)
+;tofix;  ;(sp-override-key-bindings
+;tofix;  ; '(
+;tofix;  ;   ("C-." . bounce-sexp)
+;tofix;  ;   ("C-<left>" . nil)
+;tofix;  ;   ("C-<right>" . nil)
+;tofix;  ;   ("C-M-<left>" . nil)
+;tofix;  ;   ("C-M-<right>" . nil)
+;tofix;  ;   ))
+;tofix;  :config
+;tofix;  ;; Stop pairing single quotes in elisp
+;tofix;  (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+;tofix;  (sp-local-pair 'org-mode "[" nil :actions nil)
+;tofix;  (require 'smartparens-c)
+;tofix;  ;;; see above
+;tofix;  ;;(sp-use-smartparens-bindings)
+;tofix;
+;tofix;  ;; This now appears fixed...
+;tofix;  ;;;; Smartparens is broken in `cc-mode' as of Emacs 27. See
+;tofix;  ;;;; https://github.com/Fuco1/smartparens/issues/963
+;tofix;  ;;(unless (version< emacs-version "27")
+;tofix;  ;;  (dolist (fun '(c-electric-paren c-electric-brace))
+;tofix;  ;;    (add-to-list 'sp--special-self-insert-commands fun)))
+;tofix;  (defun bounce-sexp ()
+;tofix;    "Will bounce between matching parens just like % in vi"
+;tofix;    (interactive)
+;tofix;    (let ((prev-char (char-to-string (preceding-char)))
+;tofix;		  (next-char (char-to-string (following-char))))
+;tofix;	  (cond ((string-match "[[{(<]" next-char) (sp-forward-sexp 1))
+;tofix;		    ((string-match "[\]})>]" prev-char) (sp-backward-sexp 1))
+;tofix;		    (t (error "%s" "Not on a paren, brace, or bracket")))))
+;tofix;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package iedit)
+(use-package iedit
+  ;; Type \"C-;\" to select current symbol and all matches; Then edit at multiple
+  ;; points.
+  :straight t)
 ;;(use-package undo-tree)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -133,6 +139,7 @@
 ;; which applies only to modified regions, but does crappy stuff like runs on
 ;; save...
 (use-package clang-format
+  :straight t
   :bind
   (("C-S-i" . clang-format-buffer)
    ("C-S-r" . clang-format-region))
@@ -142,17 +149,62 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; magit https://magit.vc
+;tofix;; magit https://magit.vc
+;tofix;(use-package magit
+;tofix;  :if *git*
+;tofix;  :bind
+;tofix;  ("C-x g" . magit-status)
+;tofix;  :config
+;tofix;  (setq git-commit-summary-max-length 50)
+;tofix;                                        ;(with-eval-after-load 'magit-remote
+;tofix;                                        ;  (magit-define-popup-action 'magit-push-popup ?P
+;tofix;                                        ;                             'magit-push-implicitly--desc
+;tofix;                                        ;                             'magit-push-implicitly ?p t))
+;tofix;  )
 (use-package magit
-  :if *git*
-  :bind
-  ("C-x g" . magit-status)
+  ;; A fantastic UI for git commands; the interactive rebase is an absolute
+  ;; wonder tool (see
+  ;; https://takeonrules.com/2023/01/12/using-the-git-interactive-staging-as-a-moment-to-facilitate-synthesis/).
+  ;; Also the progenitor of `transient'
+  :straight (:host github :repo "magit/magit")
+  :commands (magit-process-git)
+  ;; My "~/bin/editor" script was causing problems in that it was asking to wait.
   :config
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Adding format to git-commit-fill-column of 72 as best practice.
+  (setq git-commit-fill-column 72)
+  ;; Keeping the summary terse helps with legibility when you run a
+  ;; report with only summary.
   (setq git-commit-summary-max-length 50)
-                                        ;(with-eval-after-load 'magit-remote
-                                        ;  (magit-define-popup-action 'magit-push-popup ?P
-                                        ;                             'magit-push-implicitly--desc
-                                        ;                             'magit-push-implicitly ?p t))
+  ;; Set the tabular display columns for the `magit-list-repositories'
+  (setq magit-repolist-columns
+    '(("Name"    25 magit-repolist-column-ident ())
+       ("Version" 25 magit-repolist-column-version ())
+       ("δ"        1 magit-repolist-column-flag ())
+       ("⇣"        3 magit-repolist-column-unpulled-from-upstream
+         ((:right-align t)
+           (:help-echo "Upstream changes not in branch")))
+       ("⇡"        3 magit-repolist-column-unpushed-to-upstream
+         ((:right-align t)
+           (:help-echo "Local changes not in upstream")))
+       ("Branch"  25 magit-repolist-column-branch ())
+       ("Path"    99 magit-repolist-column-path ())))
+  ;; Have magit-status go full screen and quit to previous
+  ;; configuration.  Taken from
+  ;; http://whattheemacsd.com/setup-magit.el-01.html#comment-748135498
+  ;; and http://irreal.org/blog/?p=2253
+  ;; (defadvice magit-status (around magit-fullscreen activate)
+  ;;   (window-configuration-to-register :magit-fullscreen)
+  ;;   ad-do-it
+  ;;   (delete-other-windows))
+  ;; (defadvice magit-mode-quit-window (after magit-restore-screen activate)
+  ;;   (jump-to-register :magit-fullscreen))
+  ;; (use-package libgit :straight t)
+  (remove-hook 'magit-status-sections-hook 'magit-insert-tags-header)
+  :bind (("C-c m" . magit-status)
+          ("C-x g m" . magit-status)
+          ("C-x g f" . magit-file-dispatch)
+          ("C-x g d" . magit-dispatch))
   )
 
 ;; for github PRs management
@@ -161,46 +213,6 @@
 ;;(use-package forge)
 
 ;;(use-package git-timemachine)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; projectile has quick navigation within a project
-;; https://github.com/bbatsov/projectile
-(use-package projectile
-  ;:bind
-                                        ;("C-c p" . projectile-command-map)
-                                        ;("C-x p" . projectile-add-known-project)
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :custom
-  (projectile-completion-system 'ivy)
-  :config
-  (setq projectile-mode-line-prefix "P")
-  (setq projectile-dynamic-mode-line t)
-  (projectile-global-mode)
-  (setq projectile-completion-system 'ivy)
-  ;(setq projectile-switch-project-action 'projectile-dired)
-  ;(setq projectile-sort-order 'recentf)
-  (setq projectile-sort-order 'default)
-  ;;(setq projectile-indexing-method 'native)
-  (setq projectile-indexing-method 'alien)
-  (setq projectile-enable-caching t)
-  (setq projectile-file-exists-remote-cache-expire (* 10 60))
-  (setq projectile-file-exists-local-cache-expire (* 10 60))
-  ;(setq projectile-require-project-root nil)
-  :init
-  (projectile-mode +1)
-  ;(add-to-list 'projectile-globally-ignored-directories "node_modules")
-  )
-
-(use-package counsel-projectile
-  :after (projectile)
-  :bind
-  (("C-S-p" . counsel-projectile-find-file)
-   ("C-S-h" . counsel-projectile-ag))
-  :config
-  (setq projectile-switch-project-action 'counsel-projectile-find-file)
-  (counsel-projectile-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -263,49 +275,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; lots of snippets at
-;; https://github.com/AndreaCrotti/yasnippet-snippets.git
-;(use-package yasnippet
-;  :config
-;  (use-package yasnippet-snippets :after yasnippet)
-;  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-;  (yas-global-mode 1)
-;  (setq yas/indent-line nil)
-;  ;;:hook ((prog-mode LaTeX-mode org-mode) . yas-minor-mode)
-;  ;;:bind
-;  ;;((:map yas-minor-mode-map ("C-c C-n" . yas-expand-from-trigger-key))
-;  ;; (:map yas-keymap
-;  ;;       (("TAB" . smarter-yas-expand-next-field)
-;  ;;        ([(tab)] . smarter-yas-expand-next-field))))
-;  ;;:config
-;  ;;(yas-reload-all)
-;  ;;(defun smarter-yas-expand-next-field ()
-;  ;;  "Try to `yas-expand' then `yas-next-field' at current cursor position."
-;  ;;  (interactive)
-;  ;;  (let ((old-point (point))
-;  ;;        (old-tick (buffer-chars-modified-tick)))
-;  ;;    (yas-expand)
-;  ;;    (when (and (eq old-point (point))
-;  ;;               (eq old-tick (buffer-chars-modified-tick)))
-;  ;;      (ignore-errors (yas-next-field)))))
-;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package dumb-jump
-  :bind
-  (:map prog-mode-map
-        (("C-c C-o" . dumb-jump-go-other-window)
-         ([f12] . dumb-jump-go)
-         ([S-f12] . dumb-jump-back)
-         ("C-c C-i" . dumb-jump-go-prompt)))
-  :config
-  (setq dumb-jump-aggressive nil)
-  :custom (dumb-jump-selector 'ivy))
+;tofix;(use-package dumb-jump
+;tofix;  :bind
+;tofix;  (:map prog-mode-map
+;tofix;        (("C-c C-o" . dumb-jump-go-other-window)
+;tofix;         ([f12] . dumb-jump-go)
+;tofix;         ([S-f12] . dumb-jump-back)
+;tofix;         ("C-c C-i" . dumb-jump-go-prompt)))
+;tofix;  :config
+;tofix;  (setq dumb-jump-aggressive nil)
+;tofix;  :custom (dumb-jump-selector 'ivy))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package let-alist)
+(use-package let-alist :straight t)
 ;(use-package flycheck
 ;  :config
 ;  (add-hook 'markdown-mode-hook #'flycheck-mode)

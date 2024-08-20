@@ -1,3 +1,5 @@
+;;; init-lsp.el --- Initialize misc editor modes -*- lexical-binding: t -*-
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -16,12 +18,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package company-lsp
-  :defer t
-  :custom (company-lsp-cache-candidates 'auto))
+(use-package consult-lsp
+  :bind (:map lsp-mode-map
+         ([remap xref-find-apropos] . consult-lsp-symbols)))
 
-(use-package lsp-ivy
-  :defer t)
+;;(use-package company-lsp
+;;  :defer t
+;;  :custom (company-lsp-cache-candidates 'auto))
+;;
+;;(use-package lsp-ivy
+;;  :defer t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -82,3 +88,4 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'init-lsp)
+;;; init-lsp.el ends here
