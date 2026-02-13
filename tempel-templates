@@ -147,7 +147,7 @@ c-mode c++-mode ;;  :when (re-search-backward "^\\S-*$" (line-beginning-position
 (class  "/// @brief " (p "" class-name)
         " provides" n "class " class-name n "{" n "public:" n> q n "private:" n
         "}; // class " class-name n)
-(struct "typedef struct api_"
+(apistruct "typedef struct api_"
         (p "" struct-name)
         "_v1" n "{" n> q n "} " struct-name ";" n)
 (inc "#include <" q ".h>")

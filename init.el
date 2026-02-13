@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 ;; init emacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -16,6 +18,7 @@
 ;;            (add-to-list 'load-path name)))))))
 ;;
 ;;(update-to-load-path (expand-file-name "elisp" user-emacs-directory))
+
 (defconst *cache-save-dir* (expand-file-name "cache" user-emacs-directory))
 (defconst *user-elisp-dir* (expand-file-name "elisp" user-emacs-directory))
 (defconst *site-elisp-dir* (expand-file-name "site-elisp" user-emacs-directory))
@@ -27,10 +30,6 @@
 
 (unless (file-exists-p *cache-save-dir*)
   (make-directory *cache-save-dir*))
-
-(require 'init-functions)
-
-(require 'init-const)
 
 ;; we set these things in early-init.el, clean them out when done initializing
 ;;(add-hook 'emacs-startup-hook
@@ -55,40 +54,46 @@
 ;;            (add-hook 'minibuffer-setup-hook #'gc-minibuffer-setup-hook)
 ;;            (add-hook 'minibuffer-exit-hook #'gc-minibuffer-exit-hook)))
 
+;;(setq debug-on-error t)
 
-;; Set repositories
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'init-const)
+
 (require 'init-packagemanager)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'elpaca-after-init-hook
+          (lambda ()
+            (setq gc-cons-threshold better-gc-cons-threshold)
+            (setq gc-cons-percentage 0.1)))
 
-(require 'init-global-config)
-(require 'init-highlight)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(require 'init-editor)
-(require 'init-search)
-(require 'init-project)
-(require 'init-complete)
-(require 'init-nav)
-
+(require 'init-functions)
+(require 'init-font-functions)
 (require 'init-programming-functions)
 
+(require 'init-global-config)
+
+(require 'init-editor)
+
+(require 'init-search)
+
+(require 'init-highlight)
+
+(require 'init-project)
+(require 'init-complete)
+;;(require 'init-nav)
+;;
 (require 'init-all-modes)
+
+(require 'init-ai-agent)
+
+(elpaca-process-queues)
 
 ;;; set up all the global key bindings
 (require 'init-global-keys)
 
-;;; set up all the global key bindings
-(require 'init-project-settings)
-
-(add-hook 'elpaca-after-init-hook
-          #'(lambda ()
-              (setq gc-cons-threshold better-gc-cons-threshold)
-              (setq gc-cons-percentage 0.1))
-          99)
-
-;;(setq debug-on-error t)
+;;; set up local variables for project settings
+;(require 'init-project-settings)
 
 ;;(defun force-debug (func &rest args)
 ;;  (condition-case e

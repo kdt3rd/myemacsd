@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 ;; only emacs 27+....
 
 ;; garbage collection is apparently slow at startup
@@ -11,11 +13,13 @@
 
 (setq site-run-file nil)
 
-(push '(menu-bar-lines . 0) default-frame-alist)
+(unless (and (display-graphic-p) (eq system-type 'darwin))
+  (push '(menu-bar-lines . 0) default-frame-alist))
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
-(when (featurep 'ns)
-  (push '(ns-transparent-titlebar . t) default-frame-alist))
+
+;(when (featurep 'ns)
+;  (push '(ns-transparent-titlebar . t) default-frame-alist))
 
 (setq frame-inhibit-implied-resize t)
 

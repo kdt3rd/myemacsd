@@ -5,16 +5,15 @@
 ;; projectile has quick navigation within a project
 ;; https://github.com/bbatsov/projectile
 (use-package projectile
-  ;:bind
-                                        ;("C-c p" . projectile-command-map)
-                                        ;("C-x p" . projectile-add-known-project)
   :bind-keymap
-  ("C-c p" . projectile-command-map)
-  ;:after (ivy)
-  ;:custom
-  ;(projectile-completion-system 'ivy)
+  ("C-x p" . projectile-command-map)
+  :after ivy
+  :custom
+  (projectile-completion-system 'ivy)
   ;(projectile-project-search-path '("~/Development"))
   :config
+  (projectile-mode 1)
+  (projectile-global-mode)
   ;(setq projectile-switch-project-action 'projectile-dired)
   ;(setq projectile-sort-order 'recentf)
   ;;(setq projectile-indexing-method 'native)
@@ -29,8 +28,6 @@
   ;(setq projectile-require-project-root nil)
   ;(projectile-mode +1)
   ;(add-to-list 'projectile-globally-ignored-directories "node_modules")
-  (projectile-global-mode)
-  :hook (elpaca-after-init . projectile-mode)
   )
 
 ;;(use-package counsel-projectile

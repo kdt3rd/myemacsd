@@ -1,7 +1,7 @@
 ;;; init-emacs-lisp.el --- Initialize misc editor modes -*- lexical-binding: t -*-
 
-(use-feature eldoc
-  :diminish)
+;;(use-feature eldoc
+;;  :diminish)
 
 ;;(use-package elisp-slime-nav
 ;;  :diminish)

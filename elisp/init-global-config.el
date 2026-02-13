@@ -1,43 +1,7 @@
 ;;; init-global-config.el --- Global UI/General Configuration -*- lexical-binding: t -*-
 
-;;;; if we hit kill buffer, why wouldn't we want to kill the current buffer???
-;;(defun my:kill-current-buffer ()
-;;    "Kill the current buffer without prompting."
-;;    (interactive)
-;;    (kill-buffer (current-buffer)))
-
-(defun my:font-name ()
-  "Return a string with the font name and size."
-  (concat my:default-font "-" (number-to-string my:current-font-size)))
-
-(defun my:set-font-size ()
-  "Set the font to the default font plus current size."
-  (let ((font-name (my:font-name)))
-    (if (assoc 'font default-frame-alist)
-        (setcdr (assoc 'font default-frame-alist) font-name)
-      (add-to-list 'default-frame-alist (cons 'font font-name)))
-    (set-frame-font font-name)))
-
-(defun my:reset-font-size ()
-  "Reset font size to default."
-  (interactive)
-  (setq my:current-font-size my:default-font-size)
-  (my:set-font-size))
-
-(defun my:increase-font-size ()
-  "Increase current font size by increment."
-  (interactive)
-  (setq my:current-font-size
-        (ceiling (* my:current-font-size my:font-change-increment)))
-  (my:set-font-size))
-
-(defun my:decrease-font-size ()
-  "Decrease current font size by increment."
-  (interactive)
-  (setq my:current-font-size
-        (max 1
-             (floor (/ my:current-font-size my:font-change-increment))))
-  (my:set-font-size))
+(eval-when-compile
+  (require 'init-const))
 
 (defun my:init-general-emacs ()
   (interactive)
@@ -45,7 +9,8 @@
   (global-hl-line-mode +1)
   ;(global-eldoc-mode -1)
 
-  (global-set-key (kbd "C-x k") 'kill-this-buffer)
+  ;; as of recent 30.x-ish changes, kill this buffer requires
+  ;; an event so only works from the menu bar, which is super lame
   ;;(global-set-key (kbd "C-x C-S-k") 'kill-this-buffer)
 
   ;; Mode line controls...
@@ -103,48 +68,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-feature emacs
-  :bind
-  ("C-x \\" . align-regexp)
-  ("C-)" . my:reset-font-size)
-  ("C-+" . my:increase-font-size)
-  ("C--" . my:decrease-font-size)
-  ;;(define-key global-map (kbd "C-=") 'my:increase-font-size)
-  ;;(define-key global-map (kbd "C-_") 'my:decrease-font-size)
-  :hook
-  (elpaca-after-init . my:init-general-emacs)
-  (before-save . (lambda ()
-                   ;;(delete-trailing-whitespace-except-current-line)
-                   (when buffer-file-name
-                     (let ((dir (file-name-directory buffer-file-name)))
-                       (when (and (not (file-exists-p dir))
-                                  (y-or-n-p (format "Directory %s does not exist. Create it?" dir)))
-                         (make-directory dir t))))))
-  ;; http://yummymelon.com/devnull/enhancing-navigation-in-emacs-view-mode.html
-  (view-mode . (lambda ()
-                 (cond ((derived-mode-p 'org-mode)
-                        (define-key view-mode-map (kbd "p") 'org-previous-visible-heading)
-                        (define-key view-mode-map (kbd "n") 'org-next-visible-heading))
-                       ((derived-mode-p 'markdown-mode)
-                        (define-key view-mode-map (kbd "p") 'markdown-outline-previous)
-                        (define-key view-mode-map (kbd "n") 'markdown-outline-next))
-                       ((derived-mode-p 'html-mode)
-                        (define-key view-mode-map (kbd "p") 'sgml-skip-tag-backward)
-                        (define-key view-mode-map (kbd "n") 'sgml-skip-tag-forward))
-                       ((derived-mode-p 'emacs-lisp-mode)
-                        (define-key view-mode-map (kbd "p") 'backward-sexp)
-                        (define-key view-mode-map (kbd "n") 'forward-sexp))
-                       ((derived-mode-p 'clojure-mode)
-                        (define-key view-mode-map (kbd "p") 'backward-sexp)
-                        (define-key view-mode-map (kbd "n") 'forward-sexp))
-                       ((derived-mode-p 'makefile-mode)
-                        (define-key view-mode-map (kbd "p") 'makefile-previous-dependency)
-                        (define-key view-mode-map (kbd "n") 'makefile-next-dependency))
-                       ((derived-mode-p 'c-mode)
-                        (define-key view-mode-map (kbd "p") 'c-beginning-of-defun)
-                        (define-key view-mode-map (kbd "n") 'c-end-of-defun))
-                       (t
-                        (define-key view-mode-map (kbd "p") 'scroll-down-command)
-                        (define-key view-mode-map (kbd "n") 'scroll-up-command)))))
   :config
   (put 'narrow-to-region 'disabled nil)
   (put 'narrow-to-page 'disabled nil)
@@ -171,7 +94,6 @@
     (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
     ;; ;; Map Alt key to Meta
     ;; (setq x-alt-keysym 'meta)
-
     (setq no-blinking-cursor t)
     )
 
@@ -263,6 +185,9 @@
   (setq query-replace-highlight t)
   (setq search-highlight t)
 
+  (add-hook 'elpaca-after-init-hook (lambda () (my:init-general-emacs)))
+  ;;(my:init-general-emacs)
+
   ;;(put 'eval-expression 'disabled nil)
   ;;(setq enable-local-variables t)
   ;;(setq enable-local-eval t)
@@ -279,7 +204,7 @@
 
   ;; TODO: is this safe
   ;;(add-hook 'before-save-hook #'delete-trailing-whitespace-except-current-line)
-  ;;(add-hook 'before-save-hook #'delete-trailing-whitespace)
+  ;;(add-hook 'before-save-hook #'smart-delete-trailing-whitespace)
 
   )
 
@@ -308,10 +233,10 @@
   (savehist-file (expand-file-name "savehist" *cache-save-dir*))
   :hook (elpaca-after-init . savehist-mode))
 
-(use-feature bookmark
-  :custom
-  (bookmark-default-file (expand-file-name "bookmarks" *cache-save-dir*))
-  (bookmark-save-flag 1))
+;;(use-feature bookmark
+;;  :custom
+;;  (bookmark-default-file (expand-file-name "bookmarks" *cache-save-dir*))
+;;  (bookmark-save-flag 1))
 
 (provide 'init-global-config)
 ;;; init-global-config.el ends here

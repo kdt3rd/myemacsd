@@ -6,6 +6,7 @@
 (use-package cmake-font-lock
   :commands cmake-font-lock-activate)
 (use-package cmake-mode
+  :after cmake-font-lock
   :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'")
   :config
   (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
@@ -90,17 +91,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-feature perl-mode
-  :bind (:map perl-mode-map
-              ("\C-m" . reindent-then-newline-and-indent))
-  :mode ("\\.pl\\'" "\\.pm\\'")
-  )
+;;(use-feature perl-mode
+;;  :bind (:map perl-mode-map
+;;              ("\C-m" . reindent-then-newline-and-indent))
+;;  :mode ("\\.pl\\'" "\\.pm\\'")
+;;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-feature po-mode
-  :mode ("\\.po\\'")
-  )
+;;(use-feature po-mode
+;;  :mode ("\\.po\\'")
+;;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -142,6 +143,7 @@
          ("\\.djhtml\\'" . web-mode)
          ("\\.html?\\'" . web-mode)
          ("\\.css?\\'" . web-mode)
+         ("\\.svelte?\\'" . web-mode)
          ("\\.scss?\\'" . web-mode)))
 
 

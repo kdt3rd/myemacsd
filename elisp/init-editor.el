@@ -6,25 +6,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-feature compile
-  :custom
-  (compilation-ask-about-save nil)
-  (compilation-always-kill t)
-  (compilation-scroll-output 'first-error))
-
-;; http://stackoverflow.com/a/3072831/355252
-(use-feature ansi-color
-  :hook
-  (compilation-filter . (lambda ()
-                          (when (eq major-mode 'compilation-mode)
-                            (let ((inhibit-read-only t))
-                              (ansi-color-apply-on-region (point-min) (point-max)))))))
-
-(use-package winnow
-  :hook (compilation-mode . winnow-mode))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (use-package simple-modeline
   :hook (elpaca-after-init . simple-modeline-mode)
   :custom
@@ -40,58 +21,87 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-feature ispell
+(use-package crux
   :config
-  (setq
-   ispell-program-name "aspell"
-   ispell-dictionary "en"
-   ispell-extra-args '("--camel-case") ;; TeX mode "-t"
-   ispell-silently-savep t
-   ispell-alternate-dictionary "/usr/share/dict/american-english")
-  ;;(defun my:org-ispell ()
-  ;;  "Configure `ispell-skip-region-alist' for `org-mode'."
-  ;;  (make-local-variable 'ispell-skip-region-alist)
-  ;;  (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
-  ;;  (add-to-list 'ispell-skip-region-alist '("~" "~"))
-  ;;  (add-to-list 'ispell-skip-region-alist '("=" "="))
-  ;;  (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+  (crux-with-region-or-buffer indent-region)
+  (crux-with-region-or-buffer untabify)
+  (crux-with-region-or-point-to-eol kill-ring-save)
+  (crux-with-region-or-line comment-or-uncomment-region)
+  :bind
+  ("C-S-<backspace>" . crux-kill-line-backwards)
+  ([remap kill-whole-line] . crux-kill-whole-line)
+  ("C-k" . crux-smart-kill-line)
+  ("C-a" . crux-move-beginning-of-line)
+  ([remap open-line] . crux-smart-open-line)
   )
 
-(use-package flycheck
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package avy
+  :defer t
+  :bind
+  (("C-M-c" . avy-goto-char-timer)
+   ("C-S-g" . avy-goto-line))
   :custom
-  (flycheck-emacs-lisp-load-path 'inherit "necessary with alternatives to package.el")
-  :config
-  (setq-default flycheck-disabled-checkers '(c/c++-cppcheck))
-  (global-flycheck-mode)
-  )
+  (avy-timeout-seconds 0.3)
+  (avy-style 'pre)
+  :custom-face
+  (avy-lead-face ((t (:background "#51afef" :foreground "#870000" :weight bold)))))
 
-(use-package flycheck-aspell
-  :hook
-  (elpaca-after-init . (lambda ()
-                         (require 'flycheck-aspell)
-                         (flycheck-aspell-define-checker "org"
-                                                         "Org" ("--add-filter" "url")
-                                                         (org-mode))
-                         (add-to-list 'flycheck-checkers 'org-aspell-dynamic)
-                         ;; this doesn't seem to work...
-                         ;;(add-to-list 'flycheck-checkers 'c-aspell-dynamic)
-                       ))
-  )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package flycheck-indicator
-  :hook (flycheck-mode . flycheck-indicator-mode)
-  :custom
-  (flycheck-indicator-icon-error 9632)
-  (flycheck-indicator-icon-info 9679)
-  (flycheck-indicator-icon-warning 9650)
-  (flycheck-indicator-status-icons
-   '((running . "◉")
-     (errored . "◙")
-     (finished . "●")
-     (interrupted . "◘")
-     (suspicious . "◘")
-     (no-checker . "○")
-     (not-checked . "○"))))
+;;(use-feature ispell
+;;  :config
+;;  (setq
+;;   ispell-program-name "aspell"
+;;   ispell-dictionary "en"
+;;   ispell-extra-args '("--camel-case") ;; TeX mode "-t"
+;;   ispell-silently-savep t
+;;   ispell-alternate-dictionary "/usr/share/dict/american-english")
+;;  ;;(defun my:org-ispell ()
+;;  ;;  "Configure `ispell-skip-region-alist' for `org-mode'."
+;;  ;;  (make-local-variable 'ispell-skip-region-alist)
+;;  ;;  (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+;;  ;;  (add-to-list 'ispell-skip-region-alist '("~" "~"))
+;;  ;;  (add-to-list 'ispell-skip-region-alist '("=" "="))
+;;  ;;  (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+;;  )
+
+;;(use-package flycheck
+;;  :custom
+;;  (flycheck-emacs-lisp-load-path 'inherit "necessary with alternatives to package.el")
+;;  :config
+;;  (setq-default flycheck-disabled-checkers '(c/c++-cppcheck))
+;;  (global-flycheck-mode)
+;;  )
+
+;;(use-package flycheck-aspell
+;;  :hook
+;;  (elpaca-after-init . (lambda ()
+;;                         (require 'flycheck-aspell)
+;;                         (flycheck-aspell-define-checker "org"
+;;                                                         "Org" ("--add-filter" "url")
+;;                                                         (org-mode))
+;;                         (add-to-list 'flycheck-checkers 'org-aspell-dynamic)
+;;                         ;; this doesn't seem to work...
+;;                         ;;(add-to-list 'flycheck-checkers 'c-aspell-dynamic)
+;;                       ))
+;;  )
+
+;;(use-package flycheck-indicator
+;;  :hook (flycheck-mode . flycheck-indicator-mode)
+;;  :custom
+;;  (flycheck-indicator-icon-error 9632)
+;;  (flycheck-indicator-icon-info 9679)
+;;  (flycheck-indicator-icon-warning 9650)
+;;  (flycheck-indicator-status-icons
+;;   '((running . "◉")
+;;     (errored . "◙")
+;;     (finished . "●")
+;;     (interrupted . "◘")
+;;     (suspicious . "◘")
+;;     (no-checker . "○")
+;;     (not-checked . "○"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

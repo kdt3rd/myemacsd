@@ -1,4 +1,6 @@
-;;; init-cc.el --- Initialize cc editor modes -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t; -*-
+
+;;; init-cc.el --- Initialize cc editor modes
 
 ;;; (load "cpp-skeletons")
 
@@ -124,7 +126,7 @@ the code is C or C++ and based on that chooses whether to enable
 
     ;;(define-key c-mode-base-map "\C-m" 'reindent-then-newline-and-indent)
     (local-set-key (kbd "<return>") 'c-context-line-break)
-    (local-set-key (kbd "C-.") 'bounce-sexp)
+    ;;(local-set-key (kbd "C-.") 'bounce-sexp)
     (local-set-key (kbd "<tab>") 'my-c-indent-complete)
     ;;(define-key c++-mode-map (kbd "TAB") 'my-c-indent-complete)
     ;;(define-key c-mode-map (kbd "TAB") 'my-c-indent-complete)
@@ -133,24 +135,24 @@ the code is C or C++ and based on that chooses whether to enable
     (setq c-auto-align-backslashes t)
     (setq comment-multi-line t)
 
-    (let ((root (ignore-errors (projectile-project-root))))
-      (when root
-        (let ((ci (make-variable-buffer-local 'flycheck-clang-include-path))
-              (gi (make-variable-buffer-local 'flycheck-gcc-include-path)))
-          (mapcar (lambda (p)
-                    (add-to-list ci (expand-file-name p root))
-                    (add-to-list gi (expand-file-name p root))
-                    )
-                  (list
-                   "build.release/_deps/deflate-src/lib"
-                   "build.release/_deps/deflate-src"
-                   "build.release/_deps/imath-build/config"
-                   "build.release/_deps/imath-build/config"
-                   "build.release/_deps/imath-src/src/Imath"
-                   "build.release/cmake"
-                   "src/lib/OpenEXRCore"
-                   "src/lib/OpenEXR"
-                   "src/lib")))))
+    ;;(let ((root (ignore-errors (projectile-project-root))))
+    ;;  (when root
+    ;;    (let ((ci (make-variable-buffer-local 'flycheck-clang-include-path))
+    ;;          (gi (make-variable-buffer-local 'flycheck-gcc-include-path)))
+    ;;      (mapcar (lambda (p)
+    ;;                (add-to-list ci (expand-file-name p root))
+    ;;                (add-to-list gi (expand-file-name p root))
+    ;;                )
+    ;;              (list
+    ;;               "build.release/_deps/deflate-src/lib"
+    ;;               "build.release/_deps/deflate-src"
+    ;;               "build.release/_deps/imath-build/config"
+    ;;               "build.release/_deps/imath-build/config"
+    ;;               "build.release/_deps/imath-src/src/Imath"
+    ;;               "build.release/cmake"
+    ;;               "src/lib/OpenEXRCore"
+    ;;               "src/lib/OpenEXR"
+    ;;               "src/lib")))))
 
     (setq ff-other-file-alist
           '(("\\.cpp\\'" (".h" ".hpp" ".ipp" ".tpp"))

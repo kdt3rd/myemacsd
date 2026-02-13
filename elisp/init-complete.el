@@ -181,12 +181,13 @@
                ("k" . consult-keep-lines)
                ("u" . consult-focus-lines)
                ("e" . consult-isearch))
-         (:map vertico-map
-               ;; These are used for previewing with some consult commands (see consult-customize call below)
-               ("C-S-p" . vertico-previous)
-               ("C-S-n" . vertico-next)
-               ;; Toggle preview on/off without changing preview-key
-               ("M-P" . consult-toggle-preview)))
+         ;;(:map vertico-map
+         ;;      ;; These are used for previewing with some consult commands (see consult-customize call below)
+         ;;      ("C-S-p" . vertico-previous)
+         ;;      ("C-S-n" . vertico-next)
+         ;;      ;; Toggle preview on/off without changing preview-key
+         ;;      ("M-P" . consult-toggle-preview))
+         )
   :config
   ;(autoload 'projectile-project-root "projectile")
   (setq consult-project-root-function #'projectile-project-root)
@@ -240,7 +241,6 @@
    consult-ripgrep-parent consult-ripgrep consult-ripgrep-case-sensitive
    consult-ripgrep-unrestricted consult-z-ripgrep consult-ripgrep-thing-at-point
    consult-bookmark consult-recent-file consult-xref consult-buffer-no-preview
-   consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
    :preview-key '("M-." :debounce 0.2 "C-S-n" :debounce 0.2 "C-S-p")
    consult-ripgrep-thing-at-point
    :initial (concat "#" (thing-at-point 'symbol))
@@ -280,339 +280,376 @@
   ;; They allow narrowing with b, f and a (instead of p)
   ;; f is the recentf version provided by consult
   ;; a is an "all files" version based on fd (respecting .gitignore, hidden by default)
-  (defvar consult--project-source-project-buffer
-    (plist-put (plist-put (copy-sequence consult--source-project-buffer)
-                          :hidden nil)
-               :narrow '(?b . "Buffer")))
-  (defvar consult--project-source-project-file-recentf
-    (plist-put (plist-put (copy-sequence consult--source-project-recent-file)
-                          :hidden nil)
-               :narrow '(?f . "File (Recentf)")))
-  (defvar consult--project-source-project-file-all
-    (plist-put (plist-put (copy-sequence consult--source-project-recent-file)
-                          :narrow '(?a . "File (All)"))
-               :items '(lambda ()
-                         (when (eq 0 (call-process-shell-command "fd"))
-                           (when-let (root (consult--project-root))
-                             (let ((len (length root))
-                                   (inv-root (propertize root 'invisible t)))
-                               (mapcar (lambda (x)
-                                         (concat inv-root (substring x len)))
-                                       (split-string
-                                        (shell-command-to-string
-                                         (format  "fd --color never -t f -0 . %s" root))
-                                        "\0" t))))))))
+  ;;(defvar consult--project-source-project-buffer
+  ;;  (plist-put (plist-put (copy-sequence consult--source-project-buffer)
+  ;;                        :hidden nil)
+  ;;             :narrow '(?b . "Buffer")))
+  ;;(defvar consult--project-source-project-file-recentf
+  ;;  (plist-put (plist-put (copy-sequence consult--source-project-recent-file)
+  ;;                        :hidden nil)
+  ;;             :narrow '(?f . "File (Recentf)")))
+  ;;(defvar consult--project-source-project-file-all
+  ;;  (plist-put (plist-put (copy-sequence consult--source-project-recent-file)
+  ;;                        :narrow '(?a . "File (All)"))
+  ;;             :items '(lambda ()
+  ;;                       (when (eq 0 (call-process-shell-command "fd"))
+  ;;                         (when-let (root (consult--project-root))
+  ;;                           (let ((len (length root))
+  ;;                                 (inv-root (propertize root 'invisible t)))
+  ;;                             (mapcar (lambda (x)
+  ;;                                       (concat inv-root (substring x len)))
+  ;;                                     (split-string
+  ;;                                      (shell-command-to-string
+  ;;                                       (format  "fd --color never -t f -0 . %s" root))
+  ;;                                      "\0" t))))))))
+  ;;
+  ;;(defun consult-project-buffer ()
+  ;;  (interactive)
+  ;;  (let ((consult-buffer-sources '(consult--project-source-project-buffer
+  ;;                                  consult--project-source-project-file-recentf
+  ;;                                  consult--project-source-project-file-all)))
+  ;;    (consult-buffer)))
+  )
 
-  (defun consult-project-buffer ()
-    (interactive)
-    (let ((consult-buffer-sources '(consult--project-source-project-buffer
-                                    consult--project-source-project-file-recentf
-                                    consult--project-source-project-file-all)))
-      (consult-buffer))))
+;(use-package consult-flycheck)
 
-(use-package consult-flycheck)
+;(use-package consult-dir
+;  :after (consult)
+;  :bind (("C-x C-d" . consult-dir)
+;         :map vertico-map
+;         ("C-x C-d" . consult-dir)
+;         ("C-x C-j" . consult-dir-jump-file)))
 
-(use-package consult-dir
-  :after (consult)
-  :bind (("C-x C-d" . consult-dir)
-         :map vertico-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file)))
+;(use-package consult-git-log-grep
+;  :bind ("C-c g l" . consult-git-log-grep)
+;  :custom (consult-git-log-grep-open-function #'magit-show-commit))
 
-(use-package consult-git-log-grep
-  :bind ("C-c g l" . consult-git-log-grep)
-  :custom (consult-git-log-grep-open-function #'magit-show-commit))
+;(use-package consult-ls-git
+;  :bind ("C-c g f" . consult-ls-git))
 
-(use-package consult-ls-git
-  :bind ("C-c g f" . consult-ls-git))
-
-(use-package consult-project-extra)
+;(use-package consult-project-extra)
 
 ;;(use-package consult-todo
 ;;  ;; TODO use consult-todo-project when it works
 ;;  :after (consult)
 ;;  :bind ("C-c c t t" . consult-todo))
 
-(use-package consult-projectile
-  ;; package provides a function I use everyday: ~M-x consult-projectile~.  When
-  ;; I invoke ~consult-projectile~, I have the file completion for the current
-  ;; project.  I can also type =b= + =SPACE= to narrow my initial search to open
-  ;; buffers in the project.  Or =p= + =space= to narrow to other projects; and
-  ;; then select a file within that project.
-  :after (projectile consult)
-  :commands (consult-projectile)
-  :ensure (consult-projectile
-              :type git
-              :host gitlab
-              :repo "OlMon/consult-projectile"
-              :branch "master")
-  :config
-  (setq consult-projectile-sources
-    '( ;; key b
-       consult-projectile--source-projectile-buffer
-       ;; key f
-       consult-projectile--source-projectile-file
-       ;; key p
-       consult-projectile--source-projectile-project
-       ;; key d
-       consult-projectile--source-projectile-dir
-       ;; key m
-       consult--source-bookmark
-       ;; key r
-       consult-projectile--source-projectile-recentf
-       ;; key *
-       consult--source-modified-buffer))
-
-  (defun consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
-    (interactive)
-    (let ((default-directory (or dir default-directory)))
-      (consult--read #'read-file-name-internal :state (consult--file-preview)
-        :prompt prompt
-        :initial initial
-        :require-match mustmatch
-        :predicate pred)))
-  :bind
-  ("C-S-p" . consult-projectile)
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(use-package marginalia
-  :hook (elpaca-after-init . marginalia-mode)
-  :config
-  ;; crux-recentf-find-file
-  (add-to-list 'marginalia-prompt-categories '("Choose recent file" . file))
-  (setq marginalia-max-relative-age 0) ;; Set absolute value)
-
-(use-package embark
-  :bind
-  ("C-," . embark-act)
-  ("M-," . embark-dwim)
-  ("C-c C-o" . embark-export)
-  ("C-h b" . embark-bindings)
-  ("C-h B" . describe-bindings)
-  (:map minibuffer-local-map
-        ("M-." . embark-preview)
-        ("C-," . embark-become))
-  (:map embark-become-file+buffer-map
-        ("e" . consult-project-extra-find)
-        ("E" . project-switch-consult-project-extra-find))
-  :custom
-  (prefix-help-command 'embark-prefix-help-command)
-  :config
-  (defun embark-preview ()
-    "Previews candidate in vertico buffer, unless it's a consult command"
-    (interactive)
-    (unless (bound-and-true-p consult--preview-function)
-      (save-selected-window
-        (let ((embark-quit-after-action nil))
-          (embark-dwim)))))
-
-  (setq embark-action-indicator
-        (lambda (map &optional _target)
-          (which-key--show-keymap "Embark" map nil nil 'no-paging)
-          #'which-key--hide-popup-ignore-command)
-        embark-become-indicator embark-action-indicator))
-
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-
-(use-package embark-consult
-  :after (embark consult)
-  ;; demand, combined with after means that this will load after embark and consult
-  ;; See https://github.com/oantolin/embark/commit/47daded610b245caf01a97d74c940aff91fe14e2#r46010972
-  :demand t
-  :bind
-  (:map embark-consult-async-search-map
-        ("^" . consult-ripgrep-parent)
-        ("R" . consult-ripgrep-unrestricted))
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+;;(use-package consult-projectile
+;;  ;; package provides a function I use everyday: ~M-x consult-projectile~.  When
+;;  ;; I invoke ~consult-projectile~, I have the file completion for the current
+;;  ;; project.  I can also type =b= + =SPACE= to narrow my initial search to open
+;;  ;; buffers in the project.  Or =p= + =space= to narrow to other projects; and
+;;  ;; then select a file within that project.
+;;  :after (projectile consult)
+;;  :commands (consult-projectile)
+;;  :ensure (consult-projectile
+;;              :type git
+;;              :host gitlab
+;;              :repo "OlMon/consult-projectile"
+;;              :branch "master")
+;;  :config
+;;  (setq consult-projectile-sources
+;;    '( ;; key b
+;;       consult-projectile--source-projectile-buffer
+;;       ;; key f
+;;       consult-projectile--source-projectile-file
+;;       ;; key p
+;;       consult-projectile--source-projectile-project
+;;       ;; key d
+;;       consult-projectile--source-projectile-dir
+;;       ;; key m
+;;       consult--source-bookmark
+;;       ;; key r
+;;       consult-projectile--source-projectile-recentf
+;;       ;; key *
+;;       consult--source-modified-buffer))
+;;
+;;  (defun consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
+;;    (interactive)
+;;    (let ((default-directory (or dir default-directory)))
+;;      (consult--read #'read-file-name-internal :state (consult--file-preview)
+;;        :prompt prompt
+;;        :initial initial
+;;        :require-match mustmatch
+;;        :predicate pred)))
+;;  :bind
+;;  ("C-S-p" . consult-projectile)
+;;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package orderless
-  :defer 2
-  :bind (:map minibuffer-local-map
-              ("C-l" . my/orderless-match-components-literally))
-  :custom
-  (orderless-component-separator 'orderless-escapable-split-on-space)
-  (completion-styles '(orderless partial-completion basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles . (partial-completion orderless)))))
-  (orderless-matching-styles '(orderless-literal orderless-regexp orderless-strict-initialism))
-  (orderless-style-dispatchers '(+orderless-dispatch))
-  :config
-  (defun my/orderless-match-components-literally ()
-    "Components match literally for the rest of the session."
-    (interactive)
-    (setq-local orderless-matching-styles '(orderless-literal)
-                orderless-style-dispatchers nil))
+;;(use-package marginalia
+;;  :hook (elpaca-after-init . marginalia-mode)
+;;  :config
+;;  ;; crux-recentf-find-file
+;;  (add-to-list 'marginalia-prompt-categories '("Choose recent file" . file))
+;;  (setq marginalia-max-relative-age 0) ;; Set absolute value)
 
-  (defun orderless-strict-initialism (component &optional leading)
-    "Match a component as a strict leading initialism.
-This means the characters in COMPONENT must occur in the
-candidate, in that order, at the beginning of words, with
-no words in between. If LEADING is non-nil, anchor to the
-first word."
-    (orderless--separated-by '(seq (zero-or-more word) (zero-or-more punct))
-      (cl-loop for char across component collect `(seq word-start ,char))
-      (when leading '(seq buffer-start))))
+;;(use-package embark
+;;  :bind
+;;  ("C-," . embark-act)
+;;  ("M-," . embark-dwim)
+;;  ("C-c C-o" . embark-export)
+;;  ("C-h b" . embark-bindings)
+;;  ("C-h B" . describe-bindings)
+;;  (:map minibuffer-local-map
+;;        ("M-." . embark-preview)
+;;        ("C-," . embark-become))
+;;  (:map embark-become-file+buffer-map
+;;        ("e" . consult-project-extra-find)
+;;        ("E" . project-switch-consult-project-extra-find))
+;;  :custom
+;;  (prefix-help-command 'embark-prefix-help-command)
+;;  :config
+;;  (defun embark-preview ()
+;;    "Previews candidate in vertico buffer, unless it's a consult command"
+;;    (interactive)
+;;    (unless (bound-and-true-p consult--preview-function)
+;;      (save-selected-window
+;;        (let ((embark-quit-after-action nil))
+;;          (embark-dwim)))))
+;;
+;;  (setq embark-action-indicator
+;;        (lambda (map &optional _target)
+;;          (which-key--show-keymap "Embark" map nil nil 'no-paging)
+;;          #'which-key--hide-popup-ignore-command)
+;;        embark-become-indicator embark-action-indicator))
+;;
+;;  ;; Hide the mode line of the Embark live/completions buffers
+;;  (add-to-list 'display-buffer-alist
+;;               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+;;                 nil
+;;                 (window-parameters (mode-line-format . none)))))
 
-  (defun orderless-strict-leading-initialism (component)
-    "Match a component as a strict leading initialism.
-This means the characters in COMPONENT must occur in the
-candidate, in that order, at the beginning of words, with
-no words in between, beginning with the first word."
-    (orderless-strict-initialism component t))
+;;(use-package embark-consult
+;;  :after (embark consult)
+;;  ;; demand, combined with after means that this will load after embark and consult
+;;  ;; See https://github.com/oantolin/embark/commit/47daded610b245caf01a97d74c940aff91fe14e2#r46010972
+;;  :demand t
+;;  :bind
+;;  (:map embark-consult-async-search-map
+;;        ("^" . consult-ripgrep-parent)
+;;        ("R" . consult-ripgrep-unrestricted))
+;;  :hook
+;;  (embark-collect-mode . consult-preview-at-point-mode))
 
-  ;; based on https://github.com/minad/consult/wiki#minads-orderless-configuration
-  (defvar +orderless-dispatch-alist
-    '((?% . char-fold-to-regexp)
-      (?! . orderless-without-literal)
-      (?` . orderless-strict-leading-initialism)
-      (?= . orderless-literal)
-      (?_ . orderless-prefix)
-      (?~ . orderless-flex)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (defun +orderless--suffix-regexp ()
-    (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
-        (format "[%c-%c]*$"
-                consult--tofu-char
-                (+ consult--tofu-char consult--tofu-range -1))
-      "$"))
+;;(use-package orderless
+;;  :defer 2
+;;  :bind (:map minibuffer-local-map
+;;              ("C-l" . my/orderless-match-components-literally))
+;;  :custom
+;;  (orderless-component-separator 'orderless-escapable-split-on-space)
+;;  (completion-styles '(orderless partial-completion basic))
+;;  (completion-category-defaults nil)
+;;  (completion-category-overrides '((file (styles . (partial-completion orderless)))))
+;;  (orderless-matching-styles '(orderless-literal orderless-regexp orderless-strict-initialism))
+;;  (orderless-style-dispatchers '(+orderless-dispatch))
+;;  :config
+;;  (defun my/orderless-match-components-literally ()
+;;    "Components match literally for the rest of the session."
+;;    (interactive)
+;;    (setq-local orderless-matching-styles '(orderless-literal)
+;;                orderless-style-dispatchers nil))
+;;
+;;  (defun orderless-strict-initialism (component &optional leading)
+;;    "Match a component as a strict leading initialism.
+;;This means the characters in COMPONENT must occur in the
+;;candidate, in that order, at the beginning of words, with
+;;no words in between. If LEADING is non-nil, anchor to the
+;;first word."
+;;    (orderless--separated-by '(seq (zero-or-more word) (zero-or-more punct))
+;;      (cl-loop for char across component collect `(seq word-start ,char))
+;;      (when leading '(seq buffer-start))))
+;;
+;;  (defun orderless-strict-leading-initialism (component)
+;;    "Match a component as a strict leading initialism.
+;;This means the characters in COMPONENT must occur in the
+;;candidate, in that order, at the beginning of words, with
+;;no words in between, beginning with the first word."
+;;    (orderless-strict-initialism component t))
+;;
+;;  ;; based on https://github.com/minad/consult/wiki#minads-orderless-configuration
+;;  (defvar +orderless-dispatch-alist
+;;    '((?% . char-fold-to-regexp)
+;;      (?! . orderless-without-literal)
+;;      (?` . orderless-strict-leading-initialism)
+;;      (?= . orderless-literal)
+;;      (?_ . orderless-prefix)
+;;      (?~ . orderless-flex)))
+;;
+;;  (defun +orderless--suffix-regexp ()
+;;    (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
+;;        (format "[%c-%c]*$"
+;;                consult--tofu-char
+;;                (+ consult--tofu-char consult--tofu-range -1))
+;;      "$"))
+;;
+;;  ;; Recognizes the following patterns:
+;;  ;; * ~flex flex~
+;;  ;; * =literal literal=
+;;  ;; * _prefix prefix_
+;;  ;; * %char-fold char-fold%
+;;  ;; * `strict-leading-initialism strict-leading-initialism`
+;;  ;; * !without-literal without-literal!
+;;  ;; * .ext (file extension)
+;;  ;; * regexp$ (regexp matching at end)
+;;  (defun +orderless-dispatch (word _index _total)
+;;    (cond
+;;     ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
+;;     ((string-suffix-p "$" word)
+;;      `(orderless-regexp . ,(concat (substring word 0 -1) (+orderless--suffix-regexp))))
+;;     ;; File extensions
+;;     ((and (or minibuffer-completing-file-name
+;;               (derived-mode-p 'eshell-mode))
+;;           (string-match-p "\\`\\.." word))
+;;      `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--suffix-regexp))))
+;;     ;; Ignore single !
+;;     ((equal "!" word) `(orderless-literal . ""))
+;;     ;; Prefix and suffix
+;;     ((if-let (x (assq (aref word 0) +orderless-dispatch-alist))
+;;          (cons (cdr x) (substring word 1))
+;;        (when-let (x (assq (aref word (1- (length word))) +orderless-dispatch-alist))
+;;          (cons (cdr x) (substring word 0 -1))))))))
 
-  ;; Recognizes the following patterns:
-  ;; * ~flex flex~
-  ;; * =literal literal=
-  ;; * _prefix prefix_
-  ;; * %char-fold char-fold%
-  ;; * `strict-leading-initialism strict-leading-initialism`
-  ;; * !without-literal without-literal!
-  ;; * .ext (file extension)
-  ;; * regexp$ (regexp matching at end)
-  (defun +orderless-dispatch (word _index _total)
-    (cond
-     ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
-     ((string-suffix-p "$" word)
-      `(orderless-regexp . ,(concat (substring word 0 -1) (+orderless--suffix-regexp))))
-     ;; File extensions
-     ((and (or minibuffer-completing-file-name
-               (derived-mode-p 'eshell-mode))
-           (string-match-p "\\`\\.." word))
-      `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--suffix-regexp))))
-     ;; Ignore single !
-     ((equal "!" word) `(orderless-literal . ""))
-     ;; Prefix and suffix
-     ((if-let (x (assq (aref word 0) +orderless-dispatch-alist))
-          (cons (cdr x) (substring word 1))
-        (when-let (x (assq (aref word (1- (length word))) +orderless-dispatch-alist))
-          (cons (cdr x) (substring word 0 -1))))))))
+;;(use-package corfu
+;;  :ensure (corfu :files (:defaults "extensions/*")
+;;                 :includes (corfu-indexed corfu-quick corfu-history corfu-info corfu-popupinfo))
+;;  :custom
+;;  (corfu-auto t)
+;;  (corfu-auto-prefix 2)
+;;  (corfu-auto-delay 0.3)
+;;  (corfu-count 16)
+;;  (corfu-scroll-margin 4)
+;;  (corfu-cycle t)
+;;  (corfu-separator ?\s)                 ; Necessary for use with orderless
+;;  (corfu-quit-no-match 'separator)
+;;  (corfu-preview-current 'insert)       ; Preview current candidate?
+;;  ;;(corfu-preselect-first t)             ; Preselect first candidate?
+;;  ;;(corfu-preselect 'directory)
+;;  (corfu-preselect 'prompt)
+;;  :bind (:map corfu-map
+;;              ("TAB" . corfu-next)
+;;              ([tab] . corfu-next)
+;;              ("S-TAB" . corfu-previous)
+;;              ([backtab] . corfu-previous))
+;;  :hook (elpaca-after-init . global-corfu-mode)
+;;  ;;;; Optionally use TAB for cycling, default is `corfu-complete'.
+;;  ;;:bind (:map corfu-map
+;;  ;;        ("M-m" . corfu-move-to-minibuffer)
+;;  ;;        ("<escape>". corfu-quit)
+;;  ;;        ("<return>" . corfu-insert)
+;;  ;;        ("M-d" . corfu-show-documentation)
+;;  ;;        ("M-l" . 'corfu-show-location)
+;;  ;;        ("TAB" . corfu-next)
+;;  ;;        ([tab] . corfu-next)
+;;  ;;        ("S-TAB" . corfu-previous)
+;;  ;;        ([backtab] . corfu-previous))
+;;  ;;:preface
+;;  ;;(defun corfu-move-to-minibuffer ()
+;;  ;;  (interactive)
+;;  ;;  (when completion-in-region--data
+;;  ;;    (let ((completion-extra-properties corfu--extra)
+;;  ;;          completion-cycle-threshold completion-cycling)
+;;  ;;      (apply #'consult-completion-in-region completion-in-region--data))))
+;;  ;;
+;;  ;;(defun corfu-enable-always-in-minibuffer ()
+;;  ;;  "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+;;  ;;  (unless (or (bound-and-true-p mct--active)
+;;  ;;              (bound-and-true-p vertico--input)
+;;  ;;              (eq (current-local-map) read-passwd-map))
+;;  ;;    ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
+;;  ;;    (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
+;;  ;;                corfu-popupinfo-delay nil)
+;;  ;;    (corfu-mode 1)))
+;;  ;;:hook
+;;  ;;(minibuffer-setup . (lambda () (corfu-enable-always-in-minibuffer 1)))
+;;  )
+
+;;(use-extension corfu corfu-indexed
+;;  :config (corfu-indexed-mode 1))
+
+;;(use-extension corfu corfu-quick
+;;  :bind (:map corfu-map
+;;              ("M-;" . corfu-quick-insert)
+;;              ("M-'" . corfu-quick-exit)))
+
+;;(use-extension corfu corfu-history
+;;  :after savehist
+;;  :config
+;;  (corfu-history-mode 1)
+;;  (add-to-list 'savehist-additional-variables 'corfu-history))
+
+;;(use-extension corfu corfu-popupinfo
+;;  :hook (global-corfu-mode . corfu-popupinfo-mode))
 
 (use-package corfu
-  :ensure (corfu :files (:defaults "extensions/*")
-                 :includes (corfu-indexed corfu-quick corfu-history corfu-info corfu-popupinfo))
+  :ensure t
+  ;; Optional customizations
   :custom
-  (corfu-auto t)
-  (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.3)
-  (corfu-count 16)
-  (corfu-scroll-margin 4)
-  (corfu-cycle t)
-  (corfu-separator ?\s)                 ; Necessary for use with orderless
-  (corfu-quit-no-match 'separator)
-  (corfu-preview-current 'insert)       ; Preview current candidate?
-  ;;(corfu-preselect-first t)             ; Preselect first candidate?
-  ;;(corfu-preselect 'directory)
+  (corfu-cycle t)                 ; Allows cycling through candidates
+  (corfu-auto t)                  ; Enable auto completion
+  (corfu-auto-prefix 2)           ; Minimum length of prefix for completion
+  (corfu-auto-delay 0)            ; No delay for completion
+  (corfu-popupinfo-delay '(0.5 . 0.2))  ; Automatically update info popup after that number of seconds
+  (corfu-preview-current 'insert) ; insert previewed candidate
   (corfu-preselect 'prompt)
+  (corfu-on-exact-match nil)      ; Don't auto expand tempel snippets
+  ;; Optionally use TAB for cycling, default is `corfu-complete'.
   :bind (:map corfu-map
-              ("TAB" . corfu-next)
-              ([tab] . corfu-next)
-              ("S-TAB" . corfu-previous)
-              ([backtab] . corfu-previous))
-  :hook (elpaca-after-init . global-corfu-mode)
-  ;;;; Optionally use TAB for cycling, default is `corfu-complete'.
-  ;;:bind (:map corfu-map
-  ;;        ("M-m" . corfu-move-to-minibuffer)
-  ;;        ("<escape>". corfu-quit)
-  ;;        ("<return>" . corfu-insert)
-  ;;        ("M-d" . corfu-show-documentation)
-  ;;        ("M-l" . 'corfu-show-location)
-  ;;        ("TAB" . corfu-next)
-  ;;        ([tab] . corfu-next)
-  ;;        ("S-TAB" . corfu-previous)
-  ;;        ([backtab] . corfu-previous))
-  ;;:preface
-  ;;(defun corfu-move-to-minibuffer ()
-  ;;  (interactive)
-  ;;  (when completion-in-region--data
-  ;;    (let ((completion-extra-properties corfu--extra)
-  ;;          completion-cycle-threshold completion-cycling)
-  ;;      (apply #'consult-completion-in-region completion-in-region--data))))
-  ;;
-  ;;(defun corfu-enable-always-in-minibuffer ()
-  ;;  "Enable Corfu in the minibuffer if Vertico/Mct are not active."
-  ;;  (unless (or (bound-and-true-p mct--active)
-  ;;              (bound-and-true-p vertico--input)
-  ;;              (eq (current-local-map) read-passwd-map))
-  ;;    ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
-  ;;    (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
-  ;;                corfu-popupinfo-delay nil)
-  ;;    (corfu-mode 1)))
-  ;;:hook
-  ;;(minibuffer-setup . (lambda () (corfu-enable-always-in-minibuffer 1)))
+              ("M-SPC"      . corfu-insert-separator)
+              ("TAB"        . corfu-next)
+              ([tab]        . corfu-next)
+              ("S-TAB"      . corfu-previous)
+              ([backtab]    . corfu-previous)
+              ("S-<return>" . corfu-insert)
+              ("RET"        . corfu-insert))
+
+  :init
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode) ; Popup completion info
+;;  :config
+;;  (add-hook 'eshell-mode-hook
+;;            (lambda () (setq-local corfu-quit-at-boundary t
+;;                              corfu-quit-no-match t
+;;                              corfu-auto nil)
+;;              (corfu-mode))
+;;            nil
+;;            t)
   )
 
-(use-extension corfu corfu-indexed
-  :config (corfu-indexed-mode 1))
-
-(use-extension corfu corfu-quick
-  :bind (:map corfu-map
-              ("M-;" . corfu-quick-insert)
-              ("M-'" . corfu-quick-exit)))
-
-(use-extension corfu corfu-history
-  :after savehist
-  :config
-  (corfu-history-mode 1)
-  (add-to-list 'savehist-additional-variables 'corfu-history))
-
-(use-extension corfu corfu-popupinfo
-  :hook (global-corfu-mode . corfu-popupinfo-mode))
-
-(use-package cape
-  ;; Completion at point functions, with the amazing `cape-super-capf' for
-  ;; granular configuration of specific mode completion behavior.
-
-  :custom
-  (cape-dabbrev-min-length 2)
-  (cape-dabbrev-check-other-buffers t)
-  :config
-  ;;(require 'cape-keyword)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;(add-to-list 'completion-at-point-functions #'cape-file)
-  ;;:bind (("C-c p p" . completion-at-point) ;; capf
-  ;;       ("C-c p t" . complete-tag)        ;; etags
-  ;;       ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
-  ;;       ("C-c p h" . cape-history)
-  ;;       ("C-c p f" . cape-file)
-  ;;       ("C-c p k" . cape-keyword)
-  ;;       ("C-c p s" . cape-elisp-symbol)
-  ;;       ("C-c p e" . cape-elisp-block)
-  ;;       ("C-c p a" . cape-abbrev)
-  ;;       ("C-c p l" . cape-line)
-  ;;       ("C-c p w" . cape-dict)
-  ;;       ("C-c p :" . cape-emoji)
-  ;;       ("C-c p \\" . cape-tex)
-  ;;       ("C-c p _" . cape-tex)
-  ;;       ("C-c p ^" . cape-tex)
-  ;;       ("C-c p &" . cape-sgml)
-  ;;       ("C-c p r" . cape-rfc1345))
-  )
+;;(use-package cape
+;;  ;; Completion at point functions, with the amazing `cape-super-capf' for
+;;  ;; granular configuration of specific mode completion behavior.
+;;
+;;  :custom
+;;  (cape-dabbrev-min-length 2)
+;;  (cape-dabbrev-check-other-buffers t)
+;;  :config
+;;  ;;(require 'cape-keyword)
+;;  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+;;  (add-to-list 'completion-at-point-functions #'cape-keyword)
+;;  ;;(add-to-list 'completion-at-point-functions #'cape-file)
+;;  ;;:bind (("C-c p p" . completion-at-point) ;; capf
+;;  ;;       ("C-c p t" . complete-tag)        ;; etags
+;;  ;;       ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+;;  ;;       ("C-c p h" . cape-history)
+;;  ;;       ("C-c p f" . cape-file)
+;;  ;;       ("C-c p k" . cape-keyword)
+;;  ;;       ("C-c p s" . cape-elisp-symbol)
+;;  ;;       ("C-c p e" . cape-elisp-block)
+;;  ;;       ("C-c p a" . cape-abbrev)
+;;  ;;       ("C-c p l" . cape-line)
+;;  ;;       ("C-c p w" . cape-dict)
+;;  ;;       ("C-c p :" . cape-emoji)
+;;  ;;       ("C-c p \\" . cape-tex)
+;;  ;;       ("C-c p _" . cape-tex)
+;;  ;;       ("C-c p ^" . cape-tex)
+;;  ;;       ("C-c p &" . cape-sgml)
+;;  ;;       ("C-c p r" . cape-rfc1345))
+;;  )
 
 ;; lots of snippets at
 ;; https://github.com/AndreaCrotti/yasnippet-snippets.git
@@ -641,10 +678,6 @@ no words in between, beginning with the first word."
 ;  ;;      (ignore-errors (yas-next-field)))))
 ;  )
 (use-package tempel
-  ;; For awhile, I'd used yasnippets; themselves inspired by my beloved
-  ;; TextMate.  However, I've found `tempel' to be both more than adequate and
-  ;; has a narrower implementation foot-print, cleaving closer to emacs-lisp;
-  ;; thus likely easing it's maintenance burden.
   :ensure (tempel :host github :repo "minad/tempel")
 
   :custom
@@ -683,184 +716,184 @@ no words in between, beginning with the first word."
   ;;(tempel-key "H-m k" macro-keyboard org-mode-map)
   )
 
-(use-package vertico
-  :ensure (vertico :files (:defaults "extensions/*")
-                   :includes (vertico-directory vertico-repeat vertico-indexed vertico-quick))
-  :hook (elpaca-after-init . vertico-mode)
-  :custom
-  ;; Different scroll margin
-  (vertico-scroll-margin 0)
-  ;; Show more candidates
-  (vertico-count 20)
-  ;; Grow and shrink the Vertico minibuffer
-  ;;(vertico-resize t)
-  (vertico-cycle t)
-  :config
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  (setq enable-recursive-minibuffers t)
-  (minibuffer-depth-indicate-mode t)
-
-  ;; Add prompt indicator to `completing-read-multiple'.
-  ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
-  (defun crm-indicator (args)
-    (cons (format "[CRM%s] %s"
-                  (replace-regexp-in-string
-                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                   crm-separator)
-                  (car args))
-          (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
-  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  (setq read-extended-command-predicate
-        #'command-completion-default-include-p)
-
-  (advice-add #'vertico--format-candidate :around
-              (lambda (orig cand prefix suffix index start)
-                (setq cand (funcall orig cand prefix suffix index start))
-                (concat
-                 (if (= vertico--index index)
-                     (propertize "» " 'face 'vertico-current)
-                   "  ")
-                 cand)))
-
-  (defun down-from-outside ()
-    "Move to next candidate in minibuffer, even when minibuffer isn't selected."
-    (interactive)
-    (with-selected-window (active-minibuffer-window)
-      (execute-kbd-macro [down])))
-
-  (defun up-from-outside ()
-    "Move to previous candidate in minibuffer, even when minibuffer isn't selected."
-    (interactive)
-    (with-selected-window (active-minibuffer-window)
-      (execute-kbd-macro [up])))
-
-  (defun preview-from-outside ()
-    "Preview the selected candidate, even when minibuffer isn't selected."
-    (interactive)
-    (with-selected-window (active-minibuffer-window)
-      (execute-kbd-macro (kbd "M-."))))
-
-  (defun to-and-fro-minibuffer ()
-    "Go back and forth between minibuffer and other window."
-    (interactive)
-    (if (window-minibuffer-p (selected-window))
-        (select-window (minibuffer-selected-window))
-      (select-window (active-minibuffer-window))))
-
-  (defun minibuffer-really-quit ()
-    "Quit minibuffer session, even if it is not the selected window."
-    (interactive)
-    (with-selected-window (active-minibuffer-window)
-      (minibuffer-keyboard-quit)))
-
-  :bind (("C-M-<" . up-from-outside)
-         ("C-M->" . down-from-outside)
-         ("C-M-+" . preview-from-outside)
-         ("M-X" . to-and-fro-minibuffer)
-         ("C-M-S-g" . minibuffer-really-quit)
-         (:map vertico-map ("M-RET" . minibuffer-force-complete-and-exit))))
-
-(use-extension vertico vertico-directory
-  :config
-  (defvar switching-project nil)
-  (defun vertico-directory-enter-or-select-project ()
-    "vertico-directory-enter wrapper that plays nicely with selecting new projects."
-    (interactive)
-    ;; When selecting a project, use this to return, instead of entering the directory
-    (if switching-project
-        (vertico-exit)
-      (vertico-directory-enter)))
-  (defun vertico-directory-slash ()
-    (interactive)
-    (if (and (>= vertico--index 0)
-             (string-suffix-p "/" (vertico--candidate))
-             (eq 'file (vertico--metadata-get 'category)))
-        (vertico-insert)
-      (insert "/")))
-  (defun vertico-directory-home ()
-    (interactive)
-    (if (and (string-suffix-p "/" (vertico--candidate))
-             (eq 'file (vertico--metadata-get 'category)))
-        (insert "~/")
-      (insert "~")))
-  (defun read-project (orig &rest args)
-    (let ((switching-project t))
-      (apply orig args)))
-  (advice-add 'project-prompt-project-dir :around
-              'read-project)
-
-  ;; TODO this should be part of the vertico config
-  (defun define-vertico-key (key &rest defs)
-    "Define KEY conditionally in the vertico keymap.
-DEFS is a plist associating completion categories to commands."
-    (let ((default-command (lookup-key vertico-map (kbd key))))
-      (define-key vertico-map (kbd key)
-        (list 'menu-item nil defs :filter
-              (lambda (d)
-                (or (plist-get d (completion-metadata-get
-                                  (completion-metadata (minibuffer-contents)
-                                                       minibuffer-completion-table
-                                                       minibuffer-completion-predicate)
-                                  'category))
-                    default-command))))))
-  (define-vertico-key "/"
-    'file #'vertico-directory-slash
-    'project-file #'vertico-directory-slash)
-  (define-vertico-key "RET"
-    'file #'vertico-directory-enter-or-select-project
-    'project-file #'vertico-directory-enter)
-  (define-vertico-key "~"
-    'file #'vertico-directory-home)
-  (define-vertico-key "DEL"
-    'file #'vertico-directory-delete-char
-    'project-file #'vertico-directory-delete-char)
-  (define-vertico-key "M-DEL"
-    'file #'vertico-directory-delete-word
-    'project-file #'vertico-directory-delete-word)
-  :commands (vertico-directory-enter vertico-directory-delete-word vertico-directory-delete-char)
-  ;; Tidy shadowed file names
-  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
-
-(use-extension vertico vertico-repeat
-  :after savehist
-  :bind
-  ("C-\\" . vertico-repeat)
-  ("C-|" . vertico-repeat-select)
-  :hook (minibuffer-setup . vertico-repeat-save)
-  :config
-  (add-to-list 'savehist-additional-variables 'vertico-repeat-history))
-
-(use-extension vertico vertico-indexed
-  :config
-  (defmacro define-choose (n)
-    `(defun ,(intern (format "vertico-indexed-choose-%s" n)) ()
-       ,(format "Exit minibuffer with candidate %s." n)
-       (interactive)
-       (let ((current-prefix-arg ,n))
-         (funcall-interactively 'vertico-exit))))
-  (defmacro define-insert (n)
-    `(defun ,(intern (format "vertico-indexed-insert-%s" n)) ()
-       ,(format "Insert candidate %s in minibuffer." n)
-       (interactive)
-       (let ((current-prefix-arg ,n))
-         (funcall-interactively 'vertico-insert))))
-  (dotimes (n 10)
-    (eval `(define-choose ,n))
-    (eval `(define-insert ,n))
-    (define-key vertico-map (kbd (format "C-%s" n)) (intern (format "vertico-indexed-choose-%s" n)))
-    (define-key vertico-map (kbd (format "M-%s" n)) (intern (format "vertico-indexed-insert-%s" n))))
-  (vertico-indexed-mode 1))
-
-(use-extension vertico vertico-quick
-  :bind (:map vertico-map
-              ("M-;" . vertico-quick-insert)
-              ("M-'" . vertico-quick-exit)))
+;;(use-package vertico
+;;  :ensure (vertico :files (:defaults "extensions/*")
+;;                   :includes (vertico-directory vertico-repeat vertico-indexed vertico-quick))
+;;  :hook (elpaca-after-init . vertico-mode)
+;;  :custom
+;;  ;; Different scroll margin
+;;  (vertico-scroll-margin 0)
+;;  ;; Show more candidates
+;;  (vertico-count 20)
+;;  ;; Grow and shrink the Vertico minibuffer
+;;  ;;(vertico-resize t)
+;;  (vertico-cycle t)
+;;  :config
+;;  ;; Do not allow the cursor in the minibuffer prompt
+;;  (setq minibuffer-prompt-properties
+;;        '(read-only t cursor-intangible t face minibuffer-prompt))
+;;  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+;;  (setq enable-recursive-minibuffers t)
+;;  (minibuffer-depth-indicate-mode t)
+;;
+;;  ;; Add prompt indicator to `completing-read-multiple'.
+;;  ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+;;  (defun crm-indicator (args)
+;;    (cons (format "[CRM%s] %s"
+;;                  (replace-regexp-in-string
+;;                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+;;                   crm-separator)
+;;                  (car args))
+;;          (cdr args)))
+;;  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+;;
+;;  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+;;  ;; Vertico commands are hidden in normal buffers.
+;;  (setq read-extended-command-predicate
+;;        #'command-completion-default-include-p)
+;;
+;;  (advice-add #'vertico--format-candidate :around
+;;              (lambda (orig cand prefix suffix index start)
+;;                (setq cand (funcall orig cand prefix suffix index start))
+;;                (concat
+;;                 (if (= vertico--index index)
+;;                     (propertize "» " 'face 'vertico-current)
+;;                   "  ")
+;;                 cand)))
+;;
+;;  (defun down-from-outside ()
+;;    "Move to next candidate in minibuffer, even when minibuffer isn't selected."
+;;    (interactive)
+;;    (with-selected-window (active-minibuffer-window)
+;;      (execute-kbd-macro [down])))
+;;
+;;  (defun up-from-outside ()
+;;    "Move to previous candidate in minibuffer, even when minibuffer isn't selected."
+;;    (interactive)
+;;    (with-selected-window (active-minibuffer-window)
+;;      (execute-kbd-macro [up])))
+;;
+;;  (defun preview-from-outside ()
+;;    "Preview the selected candidate, even when minibuffer isn't selected."
+;;    (interactive)
+;;    (with-selected-window (active-minibuffer-window)
+;;      (execute-kbd-macro (kbd "M-."))))
+;;
+;;  (defun to-and-fro-minibuffer ()
+;;    "Go back and forth between minibuffer and other window."
+;;    (interactive)
+;;    (if (window-minibuffer-p (selected-window))
+;;        (select-window (minibuffer-selected-window))
+;;      (select-window (active-minibuffer-window))))
+;;
+;;  (defun minibuffer-really-quit ()
+;;    "Quit minibuffer session, even if it is not the selected window."
+;;    (interactive)
+;;    (with-selected-window (active-minibuffer-window)
+;;      (minibuffer-keyboard-quit)))
+;;
+;;  :bind (("C-M-<" . up-from-outside)
+;;         ("C-M->" . down-from-outside)
+;;         ("C-M-+" . preview-from-outside)
+;;         ("M-X" . to-and-fro-minibuffer)
+;;         ("C-M-S-g" . minibuffer-really-quit)
+;;         (:map vertico-map ("M-RET" . minibuffer-force-complete-and-exit))))
+;;
+;;(use-extension vertico vertico-directory
+;;  :config
+;;  (defvar switching-project nil)
+;;  (defun vertico-directory-enter-or-select-project ()
+;;    "vertico-directory-enter wrapper that plays nicely with selecting new projects."
+;;    (interactive)
+;;    ;; When selecting a project, use this to return, instead of entering the directory
+;;    (if switching-project
+;;        (vertico-exit)
+;;      (vertico-directory-enter)))
+;;  (defun vertico-directory-slash ()
+;;    (interactive)
+;;    (if (and (>= vertico--index 0)
+;;             (string-suffix-p "/" (vertico--candidate))
+;;             (eq 'file (vertico--metadata-get 'category)))
+;;        (vertico-insert)
+;;      (insert "/")))
+;;  (defun vertico-directory-home ()
+;;    (interactive)
+;;    (if (and (string-suffix-p "/" (vertico--candidate))
+;;             (eq 'file (vertico--metadata-get 'category)))
+;;        (insert "~/")
+;;      (insert "~")))
+;;  (defun read-project (orig &rest args)
+;;    (let ((switching-project t))
+;;      (apply orig args)))
+;;  (advice-add 'project-prompt-project-dir :around
+;;              'read-project)
+;;
+;;  ;; TODO this should be part of the vertico config
+;;  (defun define-vertico-key (key &rest defs)
+;;    "Define KEY conditionally in the vertico keymap.
+;;DEFS is a plist associating completion categories to commands."
+;;    (let ((default-command (lookup-key vertico-map (kbd key))))
+;;      (define-key vertico-map (kbd key)
+;;        (list 'menu-item nil defs :filter
+;;              (lambda (d)
+;;                (or (plist-get d (completion-metadata-get
+;;                                  (completion-metadata (minibuffer-contents)
+;;                                                       minibuffer-completion-table
+;;                                                       minibuffer-completion-predicate)
+;;                                  'category))
+;;                    default-command))))))
+;;  (define-vertico-key "/"
+;;    'file #'vertico-directory-slash
+;;    'project-file #'vertico-directory-slash)
+;;  (define-vertico-key "RET"
+;;    'file #'vertico-directory-enter-or-select-project
+;;    'project-file #'vertico-directory-enter)
+;;  (define-vertico-key "~"
+;;    'file #'vertico-directory-home)
+;;  (define-vertico-key "DEL"
+;;    'file #'vertico-directory-delete-char
+;;    'project-file #'vertico-directory-delete-char)
+;;  (define-vertico-key "M-DEL"
+;;    'file #'vertico-directory-delete-word
+;;    'project-file #'vertico-directory-delete-word)
+;;  :commands (vertico-directory-enter vertico-directory-delete-word vertico-directory-delete-char)
+;;  ;; Tidy shadowed file names
+;;  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+;;
+;;(use-extension vertico vertico-repeat
+;;  :after savehist
+;;  :bind
+;;  ("C-\\" . vertico-repeat)
+;;  ("C-|" . vertico-repeat-select)
+;;  :hook (minibuffer-setup . vertico-repeat-save)
+;;  :config
+;;  (add-to-list 'savehist-additional-variables 'vertico-repeat-history))
+;;
+;;(use-extension vertico vertico-indexed
+;;  :config
+;;  (defmacro define-choose (n)
+;;    `(defun ,(intern (format "vertico-indexed-choose-%s" n)) ()
+;;       ,(format "Exit minibuffer with candidate %s." n)
+;;       (interactive)
+;;       (let ((current-prefix-arg ,n))
+;;         (funcall-interactively 'vertico-exit))))
+;;  (defmacro define-insert (n)
+;;    `(defun ,(intern (format "vertico-indexed-insert-%s" n)) ()
+;;       ,(format "Insert candidate %s in minibuffer." n)
+;;       (interactive)
+;;       (let ((current-prefix-arg ,n))
+;;         (funcall-interactively 'vertico-insert))))
+;;  (dotimes (n 10)
+;;    (eval `(define-choose ,n))
+;;    (eval `(define-insert ,n))
+;;    (define-key vertico-map (kbd (format "C-%s" n)) (intern (format "vertico-indexed-choose-%s" n)))
+;;    (define-key vertico-map (kbd (format "M-%s" n)) (intern (format "vertico-indexed-insert-%s" n))))
+;;  (vertico-indexed-mode 1))
+;;
+;;(use-extension vertico vertico-quick
+;;  :bind (:map vertico-map
+;;              ("M-;" . vertico-quick-insert)
+;;              ("M-'" . vertico-quick-exit)))
 
 (provide 'init-complete)
 ;;; init-complete.el ends here

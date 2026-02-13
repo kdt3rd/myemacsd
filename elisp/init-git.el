@@ -4,13 +4,13 @@
   :custom
   (ediff-setup-windows-plain 'ediff-setup-windows-plain))
 
-(use-package diff-hl
-  :custom
-  (diff-hl-flydiff-mode t)
-  :hook
-  (elpaca-after-init . global-diff-hl-mode)
-  (dired-mode . diff-hl-dired-mode)
-  (magit-post-refresh . diff-hl-magit-post-refresh))
+;;(use-package diff-hl
+;;  :custom
+;;  (diff-hl-flydiff-mode t)
+;;  :hook
+;;  (elpaca-after-init . global-diff-hl-mode)
+;;  (dired-mode . diff-hl-dired-mode)
+;;  (magit-post-refresh . diff-hl-magit-post-refresh))
 
 (use-package gitconfig)
 (use-package git-modes)

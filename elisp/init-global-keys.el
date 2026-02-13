@@ -1,6 +1,8 @@
 ;;; init-global-keys.el --- Global Key Bindings -*- lexical-binding: t -*-
 
 
+;;(define-key global-map (kbd "C-=") 'my:increase-font-size)
+;;(define-key global-map (kbd "C-_") 'my:decrease-font-size)
 (use-feature emacs
   :bind
   ("C-x \\" . align-regexp)
@@ -41,6 +43,9 @@
   ([f8] . append-string-to-range)
   ([S-f8] . unappend-string-to-range)
   ([f9] . toggle-tab-size)
+  ;;(global-set-key (kbd "C-x k") 'kill-this-buffer)
+  ("C-x k" . my:kill-current-buffer)
+
 )
 
 ; TODO: put this back if we turn off smooth scroll

@@ -1,13 +1,15 @@
+;;; -*- lexical-binding: t; -*-
+
 ;;; Sets up functions and things related to fonts
 
 ;;; Code:
 
-(use-feature emacs
-  :bind
-  :hook
-  (elpaca-after-init . (lambda ()
-                         ))
-  )
+;;(use-feature emacs
+;;  :bind
+;;  :hook
+;;  (elpaca-after-init . (lambda ()
+;;                         ))
+;;  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Specify custom colors for things

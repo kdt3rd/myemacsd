@@ -1,5 +1,16 @@
 ;;; init-shell.el --- Initialize shell modes -*- lexical-binding: t -*-
 
+(eval-when-compile
+  (require 'init-const))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package shell-here
+  :bind ("M-~" . shell-here)
+  :config
+  (when *sys/linux*
+    (setq explicit-shell-file-name *zsh*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-feature eshell
@@ -19,6 +30,8 @@
   :after esh-mode
   :config
   (eshell-syntax-highlighting-global-mode +1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package xterm-color
   :after esh-mode

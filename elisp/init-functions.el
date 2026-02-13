@@ -1,5 +1,16 @@
 ;;; init-functions.el --- misc support functions -*- lexical-binding: t -*-
 
+(eval-when-compile
+  (require 'init-const))
+
+;;;; if we hit kill buffer, why wouldn't we want to kill the current buffer???
+(defun my:kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    ;;(kill-buffer (current-buffer))
+    (kill-buffer (buffer-name))
+    )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun add-to-list* (list-var &rest elts)
@@ -154,6 +165,21 @@ Ex: (path-join \"/tmp\" \"a\" \"b\" \"c\") => /tmp/a/b/c"
           (narrow-to-region (+ end 2) (point-max))
           (delete-trailing-whitespace)
           (widen))))))
+
+(defun smart-delete-trailing-whitespace ()
+  "Invoke `delete-trailing-whitespace-except-current-line' on selected major modes only."
+  (unless (member major-mode '(diff-mode))
+    (delete-trailing-whitespace-except-current-line)))
+
+(defun toggle-auto-trailing-ws-removal ()
+  "Toggle trailing whitespace removal."
+  (interactive)
+  (if (member #'smart-delete-trailing-whitespace before-save-hook)
+      (progn
+        (remove-hook 'before-save-hook #'smart-delete-trailing-whitespace)
+        (message "Disabled auto remove trailing whitespace."))
+    (add-hook 'before-save-hook #'smart-delete-trailing-whitespace)
+    (message "Enabled auto remove trailing whitespace.")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

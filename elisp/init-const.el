@@ -2,7 +2,9 @@
 ;; Miscellaneous constants....
 
 (defconst *user-home-directory*
-  (getenv-or "HOME" (concat (expand-file-name "~") "/"))
+  (if (getenv "HOME") 
+   (getenv "HOME")
+   (concat (expand-file-name "~") "/"))
   "Path to user home directory.")
 
 (setq user-full-name "Kimball D. Thurston III"
@@ -20,7 +22,7 @@
       (replace-regexp-in-string
        "\\(^[[:space:]\n]*\\|[[:space:]\n]*$\\)" "" ;; like perl chomp()
        (with-output-to-string
-         (call-process "/bin/hostname" nil standard-output nil))))
+         (call-process "/usr/bin/hostname" nil standard-output nil))))
 
 (defvar better-gc-cons-threshold 67108864 ; 64mb
   "The default value to use for `gc-cons-threshold'.
@@ -47,6 +49,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
 (defconst *clang* (executable-find "clang") "clang")
 (defconst *gcc* (executable-find "gcc") "gcc")
 (defconst *git* (executable-find "git") "git")
+(defconst *zsh* (executable-find "zsh") "zsh")
 
 (defvar my:fringe-width 6)
 

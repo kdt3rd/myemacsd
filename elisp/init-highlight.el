@@ -89,48 +89,5 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package lin
-  ;;  “LIN locally remaps the hl-line face to a style that is optimal for major
-  ;;  modes where line selection is the primary mode of interaction.”  In
-  ;;  otherwords, ~lin.el~ improves the highlighted line behavior for the
-  ;;  competing contexts.
-  :ensure (lin :host gitlab :repo "protesilaos/lin")
-  :config
-  (global-hl-line-mode 1)
-  (make-variable-buffer-local 'global-hl-line-mode)
-  (add-hook 'term-mode-hook (lambda ()
-                              (make-variable-buffer-local 'global-hl-line-mode)
-                              (setq-local global-hl-line-mode
-                                          nil)))
-  (lin-global-mode 1)
-  (setq lin-face 'lin-blue)
-  )
-
-(use-package pulsar
-  ;; A little bit of visual feedback.  See
-  ;; https://protesilaos.com/codelog/2022-03-14-emacs-pulsar-demo/
-  :ensure (pulsar :host gitlab :repo "protesilaos/pulsar")
-  :hook
-  (consult-after-jump . pulsar-recenter-top)
-  (consult-after-jump . pulsar-reveal-entry)
-  ;; integration with the built-in `imenu':
-  (imenu-after-jump . pulsar-recenter-top)
-  (imenu-after-jump . pulsar-reveal-entry)
-  :config
-  (pulsar-global-mode 1)
-  (setq pulsar-face 'pulsar-magenta
-    pulsar-delay 0.05)
-
-  ;Pulse the current line.
-  ; If PARG (given as universal prefix), pulse between `point' and `mark'."
-  :bind (("C-c C-l" . (lambda (&optional parg)
-    (interactive "P")
-    (if (car parg)
-      (pulsar--pulse nil nil (point) (mark))
-      (pulsar-pulse-line))))
-         ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (provide 'init-highlight)
 
